@@ -1,54 +1,28 @@
-# < This section can be removed >
+# Github Multi-Runner deployment on ec2 instances
 
-Official doc for public modules [hashicorp](https://developer.hashicorp.com/terraform/registry/modules/publish)
+This Module is a wrapper of the original [Philips Labs Multi-Runner module](https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/multi-runner). All credits for the original implementation goes to [philips-labs](https://github.com/philips-labs), the module in this repo has been created according to the [MIT license](https://github.com/philips-labs/terraform-aws-github-runner/blob/main/LICENSE.md).
 
-Repo structure:
-
-```
-├── README.md
-├── main.tf
-├── variables.tf
-├── outputs.tf
-├── ...
-├── modules/
-│   ├── nestedA/
-│   │   ├── README.md
-│   │   ├── variables.tf
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   ├── nestedB/
-│   ├── .../
-├── examples/
-│   ├── exampleA/
-│   │   ├── main.tf
-│   ├── exampleB/
-│   ├── .../
-```
-
-# My Terraform Module
-
-< module description >
+The goal of this wrapper is to simplify the deployment of a simple and specific use case: a basic multi-runner deployment with two set of runners, one based on amd architecture and one based on arm architecture. We aimed at hiding as much configuration as possible behind defaults, giving the user a minimal set of required variables for a fast opinionated deployment of the original multi-runner module.
 
 ## Usage
 
-< describe the module minimal code required for a deployment >
+Example deployment with the required variables:
+
+This snippet will deploy two set of runners:
+  1. Amd set (instances types ["c6i.xlarge", "c6a.xlarge"])
+  2. Arm set (instances types ["c6g.xlarge", "t4g.xlarge"])
+
+each have a max count of 5 runners and an idle configuration to have 3 idle runners each during office hours (Zurich time zone)
 
 ```hcl
-module "my_module_example" {
+module "example_multi_runner" {
+  source                    = "../"
+  environment               = "development"
+  github_app_multirunner_id = "..."
+  vpc_tag_name_value        = "..."
+  github_app_key_base64     = "..."
 }
 ```
-
-## Explanation and description of interesting use-cases
-
-< create a h2 chapter for each section explaining special module concepts >
-
-## Examples
-
-< if the folder `examples/` exists, put here the link to the examples subfolders with their descriptions >
-
-## Contributing
-
-< issues and contribution guidelines for public modules >
 
 ### Pre-Commit
 
@@ -133,4 +107,4 @@ Module is maintained by [Alfredo Gottardo](https://github.com/AlfGot), [David Be
 
 ## License
 
-Apache 2 Licensed. See [LICENSE](< link to license file >) for full details.
+Apache 2 Licensed. See [LICENSE](https://github.com/tx-pts-dai/terraform-aws-ec2-actions-runners/blob/main/LICENSE) for full details.
