@@ -44,7 +44,7 @@ locals {
       instance_types      = var.amd_instance_types
     })
     matcherConfig = {
-      labelMatchers = [["self-hosted", "linux", "x64", "ondemand"]]
+      labelMatchers = [concat(["x64"], var.runners_labels)]
       exactMatch    = true
     }
     ami_filter = {
@@ -58,7 +58,7 @@ locals {
       instance_types      = var.arm_instance_types
     })
     matcherConfig = {
-      labelMatchers = [["self-hosted", "linux", "arm64", "ondemand"]]
+      labelMatchers = [concat(["arm64"], var.runners_labels)]
       exactMatch    = true
     }
     ami_filter = {

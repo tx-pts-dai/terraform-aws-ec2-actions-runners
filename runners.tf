@@ -29,14 +29,14 @@ module "multi_runner" {
   # 
   # webhook_lambda_zip lambda function to handle GitHub App webhook events 
   # https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/webhook
-  webhook_lambda_zip                = "${path.module}/lambdas/webhook.zip"
+  webhook_lambda_zip = "${path.module}/lambdas/webhook.zip"
   # runner_binaries_syncer_lambda_zip lambda that will sync GitHub action binary to a S3 bucket
   # https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/runner-binaries-syncer
   runner_binaries_syncer_lambda_zip = "${path.module}/lambdas/runner-binaries-syncer.zip"
   # runners_lambda_zip Two set of lambdas that manage the life cycle of the runners on AWS 
   # One function will handle scaling up, the other scaling down.
   # https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/runners
-  runners_lambda_zip                = "${path.module}/lambdas/runners.zip"
+  runners_lambda_zip = "${path.module}/lambdas/runners.zip"
 
   logging_retention_in_days = var.log_retention_in_days
 }
