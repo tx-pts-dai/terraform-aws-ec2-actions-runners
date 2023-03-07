@@ -52,7 +52,7 @@ variable "runner_iam_role_managed_policy_arns" {
 variable "runner_group_name" {
   description = "github actions runner group to attach the agents to"
   type        = string
-  default     = "Infrastructure-Repository-Deployment"
+  default     = "multi-runner"
 }
 
 
