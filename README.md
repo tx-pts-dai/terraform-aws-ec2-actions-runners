@@ -16,7 +16,7 @@ each have a max count of 5 runners and an idle configuration to have 3 idle runn
 
 ```hcl
 module "example_multi_runner" {
-  source                    = "../"
+  source                    = "github.com/tx-pts-dai/terraform-aws-ec2-actions-runners?ref=vX.X.X"
   environment               = "development"
   github_app_multirunner_id = "..."
   vpc_tag_name_value        = "..."
