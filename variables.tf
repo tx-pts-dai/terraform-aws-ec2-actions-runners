@@ -144,3 +144,14 @@ variable "runners_labels" {
   default     = ["self-hosted", "linux", "ondemand"]
   type        = list(string)
 }
+
+variable "userdata_pre_install" {
+  description = "Script to be ran before the GitHub Actions runner is installed on the EC2 instances"
+  type        = string
+  default     = ""
+}
+variable "userdata_post_install" {
+  description = "Script to be ran after the GitHub Actions runner is installed on the EC2 instances"
+  type        = string
+  default     = ""
+}

@@ -18,6 +18,8 @@ locals {
       idle_config                         = var.idle_config
       runner_run_as                       = local.runner_run_as
       userdata_template                   = "${path.module}/templates/user_data.sh"
+      userdata_pre_install                = var.userdata_pre_install
+      userdata_post_install               = var.userdata_post_install
       ami_owners                          = ["137112412989"] # amazon
 
       block_device_mappings = [
