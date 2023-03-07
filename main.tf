@@ -38,39 +38,37 @@ locals {
     }
   }
 
-  linux_x64 = merge(local.runner_base_config, { # merge of architecture dependant configuration
-    runner_config = merge(local.runner_base_config.runner_config, {
-      runner_architecture = "x64"
-      instance_types      = var.amd_instance_types
+  amd_runner = var.deploy_amd ? {
+    "linux-x64" = merge(local.runner_base_config, { # merge of architecture dependant configuration
+      runner_config = merge(local.runner_base_config.runner_config, {
+        runner_architecture = "x64"
+        instance_types      = var.amd_instance_types
+      })
+      matcherConfig = {
+        labelMatchers = [concat(["x64"], var.runners_labels)]
+        exactMatch    = true
+      }
+      ami_filter = {
+        name = ["amzn2-ami-kernel-5.*-hvm-*-x86_64-gp2"]
+      }
     })
-    matcherConfig = {
-      labelMatchers = [concat(["x64"], var.runners_labels)]
-      exactMatch    = true
-    }
-    ami_filter = {
-      name = ["amzn2-ami-kernel-5.*-hvm-*-x86_64-gp2"]
-    }
-  })
+  } : {}
 
-  linux_arm64 = merge(local.runner_base_config, { # merge of architecture dependant configuration
-    runner_config = merge(local.runner_base_config.runner_config, {
-      runner_architecture = "arm64"
-      instance_types      = var.arm_instance_types
+  arm_runner = var.deploy_arm ? {
+    "linux-arm64" = merge(local.runner_base_config, { # merge of architecture dependant configuration
+      runner_config = merge(local.runner_base_config.runner_config, {
+        runner_architecture = "arm64"
+        instance_types      = var.arm_instance_types
+      })
+      matcherConfig = {
+        labelMatchers = [concat(["arm64"], var.runners_labels)]
+        exactMatch    = true
+      }
+      ami_filter = {
+        name = ["amzn2-ami-kernel-5.*-hvm-*-amd64-gp2"]
+      }
     })
-    matcherConfig = {
-      labelMatchers = [concat(["arm64"], var.runners_labels)]
-      exactMatch    = true
-    }
-    ami_filter = {
-      name = ["amzn2-ami-kernel-5.*-hvm-*-amd64-gp2"]
-    }
-  })
+  } : {}
 
-  # local.runners deploys runners based on the booland variables deploy_amd and deploy_arm
-  # deploy_amd and deploy_arm
-  # true           true       = deploy both
-  # true           false      = deploy amd
-  # false          true       = deploy arm
-  # false          false      = deploy arm
-  runners = var.deploy_amd && var.deploy_arm ? { "linux-x64" = local.linux_x64, "linux_arm64" = local.linux_arm64 } : var.deploy_amd ? { "linux-x64" = local.linux_x64 } : { "linux_arm64" = local.linux_arm64 }
+  runners = merge(local.amd_runner, local.arm_runner)
 }
