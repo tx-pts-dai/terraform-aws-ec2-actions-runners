@@ -111,13 +111,13 @@ variable "idle_config" {
   type = list(object({
     cron      = optional(string, "* * 8-19 * * 1-5") # cron schedule
     timeZone  = optional(string, "Europe/Zurich")
-    idleCount = number
+    idleCount = optional(number, 1)
   }))
   default = [
     {
       cron      = "* * 8-19 * * 1-5"
       timeZone  = "Europe/Zurich"
-      idleCount = 3
+      idleCount = 1
     }
   ]
 }
