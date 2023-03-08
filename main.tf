@@ -67,7 +67,7 @@ locals {
         exactMatch    = true
       }
       ami_filter = {
-        name = ["amzn2-ami-kernel-5.*-hvm-*-amd64-gp2"]
+        name = ["amzn2-ami-kernel-5.*-hvm-*-arm64-gp2"]
       }
     })
   } : {}
