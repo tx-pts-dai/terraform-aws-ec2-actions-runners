@@ -23,6 +23,13 @@ module "example_multi_runner" {
   github_app_key_base64     = "..."
 }
 ```
+
+### Github Application (required)
+
+Please follow the instruction on the original repo [Setup Github Application](https://github.com/philips-labs/terraform-aws-github-runner#setup-github-app-part-1)
+
+The webhook is an output of this module, while the webhook secret will not be printed, but can be retrieved directly in parameter store (name and arn of the parameters are available outputs).
+
 ## Contributing
 
 This repo has a pre-commit configuration and a workflow that verify that all checks pass on each PR.
