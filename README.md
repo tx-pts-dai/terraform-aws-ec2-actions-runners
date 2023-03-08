@@ -23,6 +23,9 @@ module "example_multi_runner" {
   github_app_key_base64     = "..."
 }
 ```
+## Contributing
+
+This repo has a pre-commit configuration and a workflow that verify that all checks pass on each PR.
 
 ### Pre-Commit
 
