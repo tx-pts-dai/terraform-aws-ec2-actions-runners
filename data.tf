@@ -10,9 +10,4 @@ data "aws_subnets" "subnets" {
     name   = "vpc-id"
     values = [data.aws_vpc.selected.id]
   }
-
-  filter {
-    name   = "tag:Name"
-    values = [var.vpc_tag_name_value]
-  }
 }
