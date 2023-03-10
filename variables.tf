@@ -8,11 +8,6 @@ variable "github_app_multirunner_id" {
   type        = string
 }
 
-variable "vpc_tag_name_value" {
-  description = "Value of the vpc tag:Name where the runners will be deployed"
-  type        = string
-}
-
 variable "github_app_key_base64" {
   description = "Github app key. Ensure the key is the base64-encoded `.pem` file (the output of `base64 app.private-key.pem`, not the content of `private-key.pem`)."
   type        = string
@@ -154,4 +149,14 @@ variable "userdata_post_install" {
   description = "Script to be ran after the GitHub Actions runner is installed on the EC2 instances"
   type        = string
   default     = ""
+}
+
+variable "vpc_id" {
+  description = "The vpc id where to deploy the runners"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "The set of subnets where to deploy the runners"
+  type        = list(string)
 }

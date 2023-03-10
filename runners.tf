@@ -9,8 +9,8 @@ module "multi_runner" {
   multi_runner_config = local.runners
 
   aws_region = var.aws_region
-  vpc_id     = data.aws_vpc.selected.id
-  subnet_ids = tolist(data.aws_subnets.subnets.ids)
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
 
   prefix = var.environment
 
