@@ -13,7 +13,7 @@ locals {
       runner_group_name                   = var.runner_group_name
       runner_iam_role_managed_policy_arns = var.runner_iam_role_managed_policy_arns
       runner_os                           = "linux"
-      runner_extra_labels                 = "ondemand"
+      runner_extra_labels                 = var.runner_extra_labels
       enable_ssm_on_runners               = true
       idle_config                         = var.idle_config
       runner_run_as                       = local.runner_run_as

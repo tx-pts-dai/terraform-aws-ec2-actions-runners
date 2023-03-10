@@ -47,7 +47,7 @@ variable "runner_iam_role_managed_policy_arns" {
 variable "runner_group_name" {
   description = "github actions runner group to attach the agents to"
   type        = string
-  default     = "multi-runner"
+  default     = "Infrastructure-Repository-Deployment"
 }
 
 
@@ -159,4 +159,10 @@ variable "vpc_id" {
 variable "subnet_ids" {
   description = "The set of subnets where to deploy the runners"
   type        = list(string)
+}
+
+variable "runner_extra_labels" {
+  description = "Extra (custom) labels for the runners (GitHub). Separate each label by a comma. Labels checks on the webhook can be enforced by setting `enable_workflow_job_labels_check`. GitHub read-only labels should not be provided."
+  type        = string
+  default     = "multi-runner"
 }
