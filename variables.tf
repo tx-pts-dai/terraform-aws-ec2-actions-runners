@@ -136,7 +136,7 @@ variable "deploy_arm" {
 
 variable "runners_labels" {
   description = "List of string of labels to assign to the runners. The runner architecture will be automatically added by the module (x64 or arm64)"
-  default     = ["self-hosted", "linux", "ondemand"]
+  default     = ["self-hosted", "linux", "multi-runner"]
   type        = list(string)
 }
 

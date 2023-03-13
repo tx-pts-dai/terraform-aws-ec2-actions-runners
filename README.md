@@ -19,10 +19,15 @@ module "example_multi_runner" {
   source                    = "github.com/tx-pts-dai/terraform-aws-ec2-actions-runners?ref=vX.X.X"
   environment               = "development"
   github_app_multirunner_id = "..."
-  vpc_tag_name_value        = "..."
+  vpc_id                    = "..."
+  subnet_ids                = "..."
   github_app_key_base64     = "..."
 }
 ```
+
+You can select the runners in a github workflow with:
+`runs-on: ["self-hosted", "linux", "x64", "multi-runner"]`
+`runs-on: ["self-hosted", "linux", "arm64", "multi-runner"]`
 
 ### Github Application (required)
 
@@ -97,7 +102,7 @@ as described in the `.pre-commit-config.yaml` file
 | <a name="input_runner_group_name"></a> [runner\_group\_name](#input\_runner\_group\_name) | github actions runner group to attach the agents to | `string` | `"Infrastructure-Repository-Deployment"` | no |
 | <a name="input_runner_iam_role_managed_policy_arns"></a> [runner\_iam\_role\_managed\_policy\_arns](#input\_runner\_iam\_role\_managed\_policy\_arns) | Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role | `list(string)` | `[]` | no |
 | <a name="input_runner_log_files"></a> [runner\_log\_files](#input\_runner\_log\_files) | Replaces the original module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object(<br>    {<br>      log_group_name   = string<br>      prefix_log_group = bool<br>      file_path        = string<br>      log_stream_name  = string<br>    }<br>  ))</pre> | <pre>[<br>  {<br>    "file_path": "/var/log/syslog",<br>    "log_group_name": "syslog",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/var/log/user-data.log",<br>    "log_group_name": "user_data",<br>    "log_stream_name": "{instance_id}/user_data",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/home/runners/actions-runner/_diag/Runner_**.log",<br>    "log_group_name": "runner",<br>    "log_stream_name": "{instance_id}/runner",<br>    "prefix_log_group": true<br>  }<br>]</pre> | no |
-| <a name="input_runners_labels"></a> [runners\_labels](#input\_runners\_labels) | List of string of labels to assign to the runners. The runner architecture will be automatically added by the module (x64 or arm64) | `list(string)` | <pre>[<br>  "self-hosted",<br>  "linux",<br>  "ondemand"<br>]</pre> | no |
+| <a name="input_runners_labels"></a> [runners\_labels](#input\_runners\_labels) | List of string of labels to assign to the runners. The runner architecture will be automatically added by the module (x64 or arm64) | `list(string)` | <pre>[<br>  "self-hosted",<br>  "linux",<br>  "multi-runner"<br>]</pre> | no |
 | <a name="input_runners_maximum_count"></a> [runners\_maximum\_count](#input\_runners\_maximum\_count) | max numbers of runners to keep per architecture | `number` | `5` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The set of subnets where to deploy the runners | `list(string)` | n/a | yes |
 | <a name="input_userdata_post_install"></a> [userdata\_post\_install](#input\_userdata\_post\_install) | Script to be ran after the GitHub Actions runner is installed on the EC2 instances | `string` | `""` | no |
