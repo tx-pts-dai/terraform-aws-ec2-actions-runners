@@ -92,6 +92,7 @@ as described in the `.pre-commit-config.yaml` file
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | aws zone where to host the github actions runners | `string` | `"eu-central-1"` | no |
 | <a name="input_deploy_amd"></a> [deploy\_amd](#input\_deploy\_amd) | determine if the amd runners will be deployed (if both var.deploy\_amd and var.deploy\_arm are false the module will deploy the amd runners anyway) | `bool` | `true` | no |
 | <a name="input_deploy_arm"></a> [deploy\_arm](#input\_deploy\_arm) | determine if the arm runners will be deployed | `bool` | `false` | no |
+| <a name="input_enable_ephemeral_runners"></a> [enable\_ephemeral\_runners](#input\_enable\_ephemeral\_runners) | Flag to enable 'ephemeral' runners rather than persistent. | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment this resource will be deployed in. | `string` | n/a | yes |
 | <a name="input_github_app_key_base64"></a> [github\_app\_key\_base64](#input\_github\_app\_key\_base64) | Github app key. Ensure the key is the base64-encoded `.pem` file (the output of `base64 app.private-key.pem`, not the content of `private-key.pem`). | `string` | n/a | yes |
 | <a name="input_github_app_multirunner_id"></a> [github\_app\_multirunner\_id](#input\_github\_app\_multirunner\_id) | id of the github app | `string` | n/a | yes |
