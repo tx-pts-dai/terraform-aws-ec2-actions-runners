@@ -26,8 +26,16 @@ module "example_multi_runner" {
 ```
 
 You can select the runners in a github workflow with:
-`runs-on: ["self-hosted", "linux", "x64", "multi-runner"]`
-`runs-on: ["self-hosted", "linux", "arm64", "multi-runner"]`
+```
+# x64 runner
+runs-on: ["self-hosted", "linux", "x64", "multi-runner"]
+# arm64 runner
+runs-on: ["self-hosted", "linux", "arm64", "multi-runner"]
+```
+
+The labels used by the runners are set as a Terraform output `runner_labels`
+
+IMPORTANT: When destroying the resources created by this module, there could be some EC2 instances as leftovers. Since they are launched dynamically via Lambda function, Terraform doesn't have any knowledge about them.
 
 ### Github Application (required)
 
