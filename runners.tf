@@ -12,7 +12,9 @@ module "multi_runner" {
   vpc_id     = var.vpc_id
   subnet_ids = var.subnet_ids
 
-  prefix = var.environment
+  prefix                = var.environment
+  role_path             = "/"
+  instance_profile_path = "/"
 
   tags = {
     Environment = var.environment

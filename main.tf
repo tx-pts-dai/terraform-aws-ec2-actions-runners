@@ -10,10 +10,11 @@ locals {
       instance_allocation_strategy        = var.instance_allocation_strategy
       runners_maximum_count               = var.runners_maximum_count
       enable_organization_runners         = true
+      enable_ephemeral_runners            = var.enable_ephemeral_runners
       runner_group_name                   = var.runner_group_name
-      runner_iam_role_managed_policy_arns = var.runner_iam_role_managed_policy_arns
+      runner_iam_role_managed_policy_arns = var.runner_iam_role_policy_arns
       runner_os                           = "linux"
-      runner_extra_labels                 = var.runner_extra_labels
+      runner_extra_labels                 = join(",", var.runner_labels)
       enable_ssm_on_runners               = true
       idle_config                         = var.idle_config
       runner_run_as                       = local.runner_run_as
@@ -47,7 +48,7 @@ locals {
         instance_types      = var.amd_instance_types
       })
       matcherConfig = {
-        labelMatchers = [concat(["x64"], var.runners_labels)]
+        labelMatchers = [concat(["self-hosted", "linux", "x64"], var.runner_labels)]
         exactMatch    = true
       }
       ami_filter = {
@@ -63,7 +64,7 @@ locals {
         instance_types      = var.arm_instance_types
       })
       matcherConfig = {
-        labelMatchers = [concat(["arm64"], var.runners_labels)]
+        labelMatchers = [concat(["self-hosted", "linux", "arm64"], var.runner_labels)]
         exactMatch    = true
       }
       ami_filter = {

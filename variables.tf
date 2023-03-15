@@ -38,7 +38,7 @@ variable "instance_allocation_strategy" {
   default     = "price-capacity-optimized"
 }
 
-variable "runner_iam_role_managed_policy_arns" {
+variable "runner_iam_role_policy_arns" {
   description = "Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role"
   type        = list(string)
   default     = []
@@ -134,10 +134,16 @@ variable "deploy_arm" {
   default     = false
 }
 
-variable "runners_labels" {
-  description = "List of string of labels to assign to the runners. The runner architecture will be automatically added by the module (x64 or arm64)"
-  default     = ["self-hosted", "linux", "multi-runner"]
+variable "runner_labels" {
+  description = "List of string of labels to assign to the runners. The runner architecture, os and 'self-hosted' will be automatically added by the module (x64 or arm64)"
+  default     = ["multi-runner"]
   type        = list(string)
+}
+
+variable "enable_ephemeral_runners" {
+  description = "Flag to enable 'ephemeral' runners rather than persistent."
+  default     = false
+  type        = bool
 }
 
 variable "userdata_pre_install" {
@@ -145,6 +151,7 @@ variable "userdata_pre_install" {
   type        = string
   default     = ""
 }
+
 variable "userdata_post_install" {
   description = "Script to be ran after the GitHub Actions runner is installed on the EC2 instances"
   type        = string
@@ -159,10 +166,4 @@ variable "vpc_id" {
 variable "subnet_ids" {
   description = "The set of subnets where to deploy the runners"
   type        = list(string)
-}
-
-variable "runner_extra_labels" {
-  description = "Extra (custom) labels for the runners (GitHub). Separate each label by a comma. Labels checks on the webhook can be enforced by setting `enable_workflow_job_labels_check`. GitHub read-only labels should not be provided."
-  type        = string
-  default     = "multi-runner"
 }
