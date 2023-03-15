@@ -15,5 +15,5 @@ output "runner_iam_roles" {
 
 output "runner_labels" {
   description = "Map of the runner labels you can use in your jobs to select the runners"
-  value       = { for k, v in local.runners : k => v.labelMatchers[0] }
+  value       = { for k, v in local.runners : k => v.matcherConfig.labelMatchers[0] }
 }
