@@ -140,6 +140,12 @@ variable "runner_labels" {
   type        = list(string)
 }
 
+variable "enable_ephemeral_runners" {
+  description = "Flag to enable 'ephemeral' runners rather than persistent."
+  default     = false
+  type        = bool
+}
+
 variable "userdata_pre_install" {
   description = "Script to be ran before the GitHub Actions runner is installed on the EC2 instances"
   type        = string
