@@ -13,7 +13,7 @@ locals {
       runner_group_name                   = var.runner_group_name
       runner_iam_role_managed_policy_arns = var.runner_iam_role_managed_policy_arns
       runner_os                           = "linux"
-      runner_extra_labels                 = var.runner_extra_labels
+      runner_extra_labels                 = join(",", var.runner_labels)
       enable_ssm_on_runners               = true
       idle_config                         = var.idle_config
       runner_run_as                       = local.runner_run_as
@@ -47,7 +47,7 @@ locals {
         instance_types      = var.amd_instance_types
       })
       matcherConfig = {
-        labelMatchers = [concat(["x64"], var.runners_labels)]
+        labelMatchers = [concat(["self-hosted", "linux", "x64"], var.runners_labels)]
         exactMatch    = true
       }
       ami_filter = {
@@ -63,7 +63,7 @@ locals {
         instance_types      = var.arm_instance_types
       })
       matcherConfig = {
-        labelMatchers = [concat(["arm64"], var.runners_labels)]
+        labelMatchers = [concat(["self-hosted", "linux", "arm64"], var.runners_labels)]
         exactMatch    = true
       }
       ami_filter = {

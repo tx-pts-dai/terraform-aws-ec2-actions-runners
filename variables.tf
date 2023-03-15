@@ -135,8 +135,8 @@ variable "deploy_arm" {
 }
 
 variable "runners_labels" {
-  description = "List of string of labels to assign to the runners. The runner architecture will be automatically added by the module (x64 or arm64)"
-  default     = ["self-hosted", "linux", "multi-runner"]
+  description = "List of string of labels to assign to the runners. The runner architecture, os and 'self-hosted' will be automatically added by the module (x64 or arm64)"
+  default     = ["multi-runner"]
   type        = list(string)
 }
 
@@ -145,6 +145,7 @@ variable "userdata_pre_install" {
   type        = string
   default     = ""
 }
+
 variable "userdata_post_install" {
   description = "Script to be ran after the GitHub Actions runner is installed on the EC2 instances"
   type        = string
@@ -159,10 +160,4 @@ variable "vpc_id" {
 variable "subnet_ids" {
   description = "The set of subnets where to deploy the runners"
   type        = list(string)
-}
-
-variable "runner_extra_labels" {
-  description = "Extra (custom) labels for the runners (GitHub). Separate each label by a comma. Labels checks on the webhook can be enforced by setting `enable_workflow_job_labels_check`. GitHub read-only labels should not be provided."
-  type        = string
-  default     = "multi-runner"
 }
