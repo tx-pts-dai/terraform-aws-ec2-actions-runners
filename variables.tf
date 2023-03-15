@@ -38,7 +38,7 @@ variable "instance_allocation_strategy" {
   default     = "price-capacity-optimized"
 }
 
-variable "runner_iam_role_managed_policy_arns" {
+variable "runner_iam_role_policy_arns" {
   description = "Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role"
   type        = list(string)
   default     = []
@@ -134,7 +134,7 @@ variable "deploy_arm" {
   default     = false
 }
 
-variable "runners_labels" {
+variable "runner_labels" {
   description = "List of string of labels to assign to the runners. The runner architecture, os and 'self-hosted' will be automatically added by the module (x64 or arm64)"
   default     = ["multi-runner"]
   type        = list(string)
