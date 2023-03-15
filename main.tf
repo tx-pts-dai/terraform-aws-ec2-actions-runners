@@ -12,6 +12,7 @@ locals {
       enable_organization_runners         = true
       enable_ephemeral_runners            = var.enable_ephemeral_runners
       role_path                           = "/"
+      instance_profile_path               = "/"
       runner_group_name                   = var.runner_group_name
       runner_iam_role_managed_policy_arns = var.runner_iam_role_policy_arns
       runner_os                           = "linux"
