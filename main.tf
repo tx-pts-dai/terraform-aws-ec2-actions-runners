@@ -8,6 +8,7 @@ locals {
     runner_config = {
       create_service_linked_role_spot     = true
       instance_allocation_strategy        = var.instance_allocation_strategy
+      instance_target_capacity_type       = var.instance_target_capacity_type
       runners_maximum_count               = var.runners_maximum_count
       enable_organization_runners         = true
       enable_ephemeral_runners            = var.enable_ephemeral_runners

@@ -38,6 +38,17 @@ variable "instance_allocation_strategy" {
   default     = "price-capacity-optimized"
 }
 
+variable "instance_target_capacity_type" {
+  description = "Default lifecyle used runner instances, can be either `spot` or `on-demand`."
+  type        = string
+  default     = "spot"
+
+  validation {
+    condition     = contains(["spot", "on-demand"], var.instance_target_capacity_type)
+    error_message = "The instance target capacity should be either spot or on-demand."
+  }
+}
+
 variable "runner_iam_role_policy_arns" {
   description = "Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role"
   type        = list(string)
