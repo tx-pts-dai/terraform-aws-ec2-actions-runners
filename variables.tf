@@ -1,5 +1,5 @@
-variable "prefix" {
-  description = "The prefix used for naming resources."
+variable "unique_prefix" {
+  description = "The unique prefix used for naming resources."
   type        = string
 }
 
