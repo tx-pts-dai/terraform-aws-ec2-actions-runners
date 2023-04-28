@@ -3,6 +3,11 @@ output "webhook_endpoint" {
   value       = module.multi_runner.webhook.endpoint
 }
 
+output "webhook_secret" {
+  description = "Webhook secret used to validate requests from Github. Use this as 'webhook secret' in the Github app."
+  value       = random_id.webhook_secret.hex
+}
+
 output "ssm_parameters" {
   description = "Names and ARNs of the ssm parameters created by the multi_runner module"
   value       = module.multi_runner.ssm_parameters
