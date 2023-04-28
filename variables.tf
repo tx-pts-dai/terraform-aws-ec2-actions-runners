@@ -1,3 +1,8 @@
+variable "prefix" {
+  description = "The prefix used for naming resources."
+  type        = string
+}
+
 variable "environment" {
   description = "The environment this resource will be deployed in."
   type        = string
