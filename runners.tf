@@ -4,7 +4,7 @@ resource "random_id" "webhook_secret" {
 
 module "multi_runner" {
   source  = "philips-labs/github-runner/aws//modules/multi-runner"
-  version = "2.2.0"
+  version = "3.2.0"
 
   multi_runner_config = local.runners
 
@@ -12,7 +12,7 @@ module "multi_runner" {
   vpc_id     = var.vpc_id
   subnet_ids = var.subnet_ids
 
-  prefix                = var.environment
+  prefix                = var.unique_prefix
   role_path             = "/"
   instance_profile_path = "/"
 

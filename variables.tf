@@ -1,3 +1,8 @@
+variable "unique_prefix" {
+  description = "The unique prefix used for naming resources."
+  type        = string
+}
+
 variable "environment" {
   description = "The environment this resource will be deployed in."
   type        = string
@@ -36,6 +41,17 @@ variable "instance_allocation_strategy" {
   description = "allocation strategy for spot instances"
   type        = string
   default     = "price-capacity-optimized"
+}
+
+variable "instance_target_capacity_type" {
+  description = "Default lifecyle used runner instances, can be either `spot` or `on-demand`."
+  type        = string
+  default     = "spot"
+
+  validation {
+    condition     = contains(["spot", "on-demand"], var.instance_target_capacity_type)
+    error_message = "The instance target capacity should be either spot or on-demand."
+  }
 }
 
 variable "runner_iam_role_policy_arns" {
