@@ -6,6 +6,7 @@ output "webhook_endpoint" {
 output "webhook_secret" {
   description = "Webhook secret used to validate requests from Github. Use this as 'webhook secret' in the Github app."
   value       = random_id.webhook_secret.hex
+  sensitive   = true
 }
 
 output "ssm_parameters" {
