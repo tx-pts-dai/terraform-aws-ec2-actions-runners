@@ -22,9 +22,9 @@ locals {
       pool_runner_owner                   = var.github_org
       pool_config = var.enable_ephemeral_runners ? [{
         size                = var.idle_count
-        schedule_expression = "cron(* * * * ? *)"
+        schedule_expression = "cron(*/2 * * * ? *)"
       }] : []
-      # scale_down_schedule_expression = "cron(* * * * ? *)" # not sure if needed with ephemeral runners
+      # scale_down_schedule_expression = "cron(*/5 * * * ? *)" # not sure if needed with ephemeral runners
 
       runner_run_as         = "runners"
       userdata_template     = "${path.module}/templates/user_data.sh"
