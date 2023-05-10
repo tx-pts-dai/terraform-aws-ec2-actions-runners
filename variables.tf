@@ -18,6 +18,12 @@ variable "github_app_key_base64" {
   type        = string
 }
 
+variable "github_org" {
+  description = "Name of the Github organization, owning the runners. Required only if specified with ephemeral runners"
+  type        = string
+  default     = null
+}
+
 variable "arm_instance_types" {
   description = "on demand spot arm64 instances"
   type        = list(string)
@@ -70,7 +76,7 @@ variable "runner_group_name" {
 variable "runners_maximum_count" {
   description = "max numbers of runners to keep per architecture"
   type        = number
-  default     = 5
+  default     = 10
 }
 
 variable "aws_region" {
@@ -120,17 +126,26 @@ variable "runner_log_files" {
 variable "idle_config" {
   description = "List of time period that can be defined as cron expression to keep a minimum amount of runners active instead of scaling down to 0. By defining this list you can ensure that in time periods that match the cron expression within 5 seconds a runner is kept idle."
   type = list(object({
-    cron      = optional(string, "* * 8-19 * * 1-5") # cron schedule
-    timeZone  = optional(string, "Europe/Zurich")
-    idleCount = optional(number, 1)
+    cron     = optional(string, "* * 8-19 * * 1-5") # cron schedule
+    timeZone = optional(string, "Europe/Zurich")
   }))
   default = [
     {
-      cron      = "* * 8-19 * * 1-5"
-      timeZone  = "Europe/Zurich"
-      idleCount = 1
+      cron     = "* * 8-19 * * 1-5"
+      timeZone = "Europe/Zurich"
     }
   ]
+}
+
+variable "idle_count" {
+  description = "Number of runners to keep idle to accelerate. The more runners, the faster the execution, but the more expensive it becomes."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.idle_count >= 0
+    error_message = "The number of idle runners must be a positive integer (>= 0)"
+  }
 }
 
 variable "log_retention_in_days" {

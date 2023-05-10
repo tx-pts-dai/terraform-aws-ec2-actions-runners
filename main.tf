@@ -1,28 +1,36 @@
 locals {
-  runner_run_as = "runners"
-
-  runner_base_config = { # Base configuration shared between arm and amd runners
-    fifo                = true
-    delay_webhook_event = 0
+  org_runners = true
+  runner_base_config = {      # Base configuration shared between arm and amd runners
+    fifo = !local.org_runners # suggested only for repo-level runners
 
     runner_config = {
-      create_service_linked_role_spot     = true
-      instance_allocation_strategy        = var.instance_allocation_strategy
       instance_target_capacity_type       = var.instance_target_capacity_type
-      runners_maximum_count               = var.runners_maximum_count
-      enable_organization_runners         = true
+      instance_allocation_strategy        = var.instance_allocation_strategy
+      create_service_linked_role_spot     = var.instance_target_capacity_type == "spot"
+      enable_runner_detailed_monitoring   = true
+      enable_ssm_on_runners               = true
+      enable_organization_runners         = local.org_runners
       enable_ephemeral_runners            = var.enable_ephemeral_runners
+      enable_job_queued_check             = var.enable_ephemeral_runners ? true : null
+      delay_webhook_event                 = 0
       runner_group_name                   = var.runner_group_name
       runner_iam_role_managed_policy_arns = var.runner_iam_role_policy_arns
       runner_os                           = "linux"
       runner_extra_labels                 = join(",", var.runner_labels)
-      enable_ssm_on_runners               = true
-      idle_config                         = var.idle_config
-      runner_run_as                       = local.runner_run_as
-      userdata_template                   = "${path.module}/templates/user_data.sh"
-      userdata_pre_install                = var.userdata_pre_install
-      userdata_post_install               = var.userdata_post_install
-      ami_owners                          = ["137112412989"] # amazon
+      runners_maximum_count               = var.runners_maximum_count
+      idle_config                         = var.enable_ephemeral_runners ? [merge(var.idle_config[0], { idleCount = var.idle_count })] : []
+      pool_runner_owner                   = var.github_org
+      pool_config = var.enable_ephemeral_runners ? [{
+        size                = var.idle_count
+        schedule_expression = "cron(* * * * ? *)"
+      }] : []
+      # scale_down_schedule_expression = "cron(* * * * ? *)" # not sure if needed with ephemeral runners
+
+      runner_run_as         = "runners"
+      userdata_template     = "${path.module}/templates/user_data.sh"
+      userdata_pre_install  = var.userdata_pre_install
+      userdata_post_install = var.userdata_post_install
+      ami_owners            = ["137112412989"] # amazon
 
       block_device_mappings = [
         {
