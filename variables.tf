@@ -126,13 +126,13 @@ variable "runner_log_files" {
 variable "idle_config" {
   description = "List of time period that can be defined as cron expression to keep a minimum amount of runners active instead of scaling down to 0. By defining this list you can ensure that in time periods that match the cron expression within 5 seconds a runner is kept idle."
   type = list(object({
-    cron      = optional(string, "* 8-18 * * 1-5") # cron schedule
+    cron      = optional(string, "* 8-18 ? * 1-5") # cron schedule
     timeZone  = optional(string, "Europe/Zurich")
     idleCount = optional(number, 1)
   }))
   default = [
     {
-      cron      = "* 8-18 * * 1-5"
+      cron      = "* 8-18 ? * 1-5"
       timeZone  = "Europe/Zurich"
       idleCount = 1
     }
