@@ -1,7 +1,7 @@
 locals {
   org_runners = true
-  runner_base_config = {      # Base configuration shared between arm and amd runners
-    fifo = !local.org_runners # suggested only for repo-level runners
+  runner_base_config = {                         # Base configuration shared between arm and amd runners
+    enable_fifo_build_queue = !local.org_runners # suggested only for repo-level runners
 
     runner_config = {
       instance_target_capacity_type           = var.instance_target_capacity_type
