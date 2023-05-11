@@ -13,18 +13,23 @@ locals {
       enable_ephemeral_runners                = var.enable_ephemeral_runners
       enable_job_queued_check                 = var.enable_ephemeral_runners ? true : null
       delay_webhook_event                     = 0
-      scale_up_reserved_concurrent_executions = -1 # don't put restrictions on concurrency
+      scale_up_reserved_concurrent_executions = -1 # don't put restrictions on concurrency for scaling up to scale fast.
       runner_group_name                       = var.runner_group_name
       runner_iam_role_managed_policy_arns     = var.runner_iam_role_policy_arns
       runner_os                               = "linux"
       runner_extra_labels                     = join(",", var.runner_labels)
       runners_maximum_count                   = var.runners_maximum_count
-      idle_config                             = var.enable_ephemeral_runners ? [merge(var.idle_config[0], { idleCount = var.idle_count })] : []
+      idle_config                             = var.enable_ephemeral_runners ? [] : var.idle_config
       pool_runner_owner                       = var.github_org
-      pool_config = var.enable_ephemeral_runners ? [{
-        size                = var.idle_count
-        schedule_expression = "cron(* 8-18 * * ? 1-5)" # Check that the at least var.idle_count runner is scheduled (once every min)
+      pool_config = var.enable_ephemeral_runners ? [for config in var.idle_config : {
+        size                = config.idleCount
+        schedule_expression = "cron(${config.cron})" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
       }] : []
+
+      redrive_policy_build_queue = {
+        enabled         = true
+        maxReceiveCount = 50 # 50 retries every 30 seconds => 25 minutes
+      }
 
       runner_run_as         = "runners"
       userdata_template     = "${path.module}/templates/user_data.sh"

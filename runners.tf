@@ -26,6 +26,9 @@ module "multi_runner" {
     webhook_secret = random_id.webhook_secret.hex
   }
 
+  # TODO: check what the variables below do
+  # repository_white_list = ?
+
   # Functions paths are hardcoded since we distribute the lambdas directly from this module
   # avoiding an extra step in the pipeline
   # 
