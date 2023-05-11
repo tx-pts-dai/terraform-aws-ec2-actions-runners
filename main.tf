@@ -27,7 +27,7 @@ locals {
       }] : []
       # if runners are ephemeral, scale-down function it's not needed because runners should get destroyed by itself after the run.
       # therefore we set it to once every 1h
-      scale_down_schedule_expression = var.enable_ephemeral_runners ? "cron(0 * * * * *)" : null
+      scale_down_schedule_expression = var.enable_ephemeral_runners ? "cron(0 * * * ? *)" : null
 
       redrive_policy_build_queue = {
         enabled         = true
