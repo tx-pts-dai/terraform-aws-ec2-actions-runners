@@ -25,6 +25,7 @@ locals {
         size                = config.idleCount
         schedule_expression = "cron(${config.cron} *)" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
       }] : []
+      scale_down_schedule_expression = var.enable_ephemeral_runners ? "cron(0 * * * *)" : null # if runners are ephemeral, scale-down function it's not needed because runners should get destroyed by itself after the run, therefore we set it to once every 1h
 
       redrive_policy_build_queue = {
         enabled         = true
