@@ -23,7 +23,7 @@ locals {
       pool_runner_owner                       = var.github_org
       pool_config = var.enable_ephemeral_runners ? [for config in var.idle_config : {
         size                = config.idleCount
-        schedule_expression = "cron(${config.cron})" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
+        schedule_expression = "cron(${config.cron} *)" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
       }] : []
 
       redrive_policy_build_queue = {
