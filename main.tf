@@ -69,7 +69,7 @@ locals {
     })
     matcherConfig = {
       labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], local.labels[runner_name])]
-      exactMatch    = false
+      exactMatch    = true # TODO: test with false
     }
     ami_filter = {
       name = local.runners_ami_filters[runner.architecture]
