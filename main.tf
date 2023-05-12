@@ -52,6 +52,7 @@ locals {
       enable_job_queued_check         = runner.ephemeral ? true : null
       runner_os                       = runner.os
       runner_architecture             = runner.architecture
+      instance_types                  = runner.instance_types
       runner_extra_labels             = join(",", runner.labels)
       runners_maximum_count           = runner.maximum_count
       idle_config                     = runner.ephemeral ? [] : runner.idle_config
