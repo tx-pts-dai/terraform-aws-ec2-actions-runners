@@ -1,7 +1,11 @@
 #!/bin/bash -x
 exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 
+echo "INFO: pre-install phase starting at $(date -u +%H:%M:%S)"
+
 ${pre_install}
+
+echo "INFO: installing additional packages at $(date -u +%H:%M:%S)"
 
 yum update -y
 yum install -y \
@@ -43,6 +47,8 @@ systemctl start docker
 # add user runners to docker group
 usermod -aG docker runners
 
+echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
+
 ${install_runner}
 
 # config runner for rootless docker
@@ -53,5 +59,7 @@ cd /opt/actions-runner/
 ${post_install}
 
 cd /opt/actions-runner
+
+echo "INFO: starting github runner at $(date -u +%H:%M:%S)"
 
 ${start_runner}
