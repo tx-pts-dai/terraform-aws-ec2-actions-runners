@@ -2,9 +2,9 @@
 
 This Module is a wrapper of the original [Philips Labs Multi-Runner module](https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/multi-runner). All credits for the original implementation goes to [philips-labs](https://github.com/philips-labs), the module in this repo has been created according to the [MIT license](https://github.com/philips-labs/terraform-aws-github-runner/blob/main/LICENSE.md).
 
-The goal of this wrapper is to solving one simple problem: the deployment of a basic Github Runner for both x64 and arm64 architectures. We aimed at hiding as much configuration as possible behind defaults, giving the user a minimal set of required variables for a fast, opinionated deployment of the original multi-runner module.
+The goal of this wrapper is to solve one simple problem: the deployment of a basic Github Runner setup. We aimed at hiding as much configuration as possible behind defaults, giving the user a minimal set of required variables for a fast, opinionated deployment of the original multi-runner module.
 
-Ephemeral and persistent runner configurations are both possible and will be configured accordingly based on the `runner.ephemeral` flag.
+Ephemeral and persistent runner configurations are both possible as well as `x64` and `arm64`. They are configurable with their respective parameters `runner.ephemeral` and `runner.architecture`.
 
 ## Usage
 
@@ -12,8 +12,8 @@ Example deployment with the required variables:
 
 This snippet will deploy two set of runners:
 
-  1. x64 set (instances types ["c6i.xlarge", "c6a.xlarge"])
-  2. arm64 set (instances types ["c6g.xlarge", "t4g.xlarge"])
+  1. x64 with labels `["self-hosted", "linux", "x64", "team-red", "spot"]`
+  2. arm64 with labels `["self-hosted", "linux", "arm64", "team-blue", "on-demand"]`
 
 each have a max count of 15 runners and an idle configuration to have 1 idle/warm runner each during office hours (8am-7pm Zurich time)
 
@@ -21,16 +21,22 @@ each have a max count of 15 runners and an idle configuration to have 1 idle/war
 module "example_multi_runner" {
   source                    = "github.com/tx-pts-dai/terraform-aws-ec2-actions-runners?ref=vX.X.X"
   unique_prefix             = "build-runners"
-  github_app_multirunner_id = "..."
-  github_app_key_base64     = "..."
-  vpc_id                    = "..."
-  subnet_ids                = "..."
+  github_app_multirunner_id = "123456"
+  github_app_key_base64     = "myprivatekey"
+  vpc_id                    = "vpc-01234567"
+  subnet_ids                = ["subnet-0123456", "subnet-1234567"]
   runners = {
     team-red-x64 = {
       architecture       = "x64"
-      labels             = ["team-red", "spot"]
-      use_spot_instances = true
       instance_types     = ["c6i.large"]
+      labels             = ["team-red"]
+      use_spot_instances = true
+    }
+    team-blue-arm64 = {
+      architecture       = "arm64"
+      instance_types     = ["c7g.large"]
+      labels             = ["team-blue"]
+      ephemeral          = true
     }
   }
 }
@@ -41,12 +47,17 @@ You can select the runners in a github workflow with:
 ```yaml
 runs-on: ["self-hosted", "linux", "x64", "team-red", "spot"]
 # or for arm64 arch
-runs-on: ["self-hosted", "linux", "arm64", "team-red", "spot"]
+runs-on: ["self-hosted", "linux", "arm64", "team-blue", "on-demand"]
 ```
 
-The labels used by the runners are set as a Terraform output `runner_labels`
+The labels used by the runners are set as a Terraform output `runner_labels`. Our module adds the following labels additionally to the one you specify with `runner.labels`:
 
-IMPORTANT: When destroying the resources created by this module, there could be some EC2 instances as leftovers. Since they are launched dynamically via Lambda function, Terraform doesn't have any knowledge about them.
+1. Architecture -> either `x64` or `arm64`
+2. OS -> either `linux` or `windows`
+3. Capacity type -> either `on-demand` or `spot`
+4. Self-hosted -> `self-hosted`
+
+IMPORTANT: When destroying the resources created by this module, there could be some EC2 instances as leftovers. Since they are launched dynamically via Lambda function, Terraform doesn't have any knowledge about them, therefore you should terminate/refresh them manually.
 
 ### Github Application (required)
 
