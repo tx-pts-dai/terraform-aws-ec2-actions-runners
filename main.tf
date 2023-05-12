@@ -43,7 +43,9 @@ locals {
 
   }
 
-  runners = { for name, runner in var.runners : "${runner.os}-${name}" => {
+  labels = { for runner_name, runner in var.runners : runner_name => concat(runner.labels, runner.use_spot_instances ? ["spot"] : ["on-demand"]) }
+
+  runners = { for runner_name, runner in var.runners : "${runner.os}-${runner_name}" => {
     enable_fifo_build_queue = !local.org_runners # suggested only for repo-level runners
     runner_config = merge(local.runner_base_config, {
       instance_target_capacity_type   = runner.use_spot_instances ? "spot" : "on-demand"
@@ -53,7 +55,7 @@ locals {
       runner_os                       = runner.os
       runner_architecture             = runner.architecture
       instance_types                  = runner.instance_types
-      runner_extra_labels             = join(",", runner.labels)
+      runner_extra_labels             = join(",", local.labels[runner_name])
       runners_maximum_count           = runner.maximum_count
       idle_config                     = runner.ephemeral ? [] : runner.idle_config
       pool_runner_owner               = runner.ephemeral ? var.github_org : null
@@ -66,7 +68,7 @@ locals {
       scale_down_schedule_expression = runner.ephemeral ? "cron(0 * * * ? *)" : null
     })
     matcherConfig = {
-      labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], runner.labels)]
+      labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], local.labels[runner_name])]
       exactMatch    = true # TODO: test with false
     }
     ami_filter = {
