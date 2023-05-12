@@ -2,7 +2,9 @@
 
 This Module is a wrapper of the original [Philips Labs Multi-Runner module](https://github.com/philips-labs/terraform-aws-github-runner/tree/main/modules/multi-runner). All credits for the original implementation goes to [philips-labs](https://github.com/philips-labs), the module in this repo has been created according to the [MIT license](https://github.com/philips-labs/terraform-aws-github-runner/blob/main/LICENSE.md).
 
-The goal of this wrapper is to simplify the deployment of a simple and specific use case: a basic multi-runner deployment with two set of runners, one based on amd architecture and one based on arm architecture. We aimed at hiding as much configuration as possible behind defaults, giving the user a minimal set of required variables for a fast opinionated deployment of the original multi-runner module.
+The goal of this wrapper is to solving one simple problem: the deployment of a basic Github Runner for both x64 and arm64 architectures. We aimed at hiding as much configuration as possible behind defaults, giving the user a minimal set of required variables for a fast, opinionated deployment of the original multi-runner module.
+
+Ephemeral and persistent runner configurations are both possible and will be configured accordingly based on the `runner.ephemeral` flag.
 
 ## Usage
 
@@ -10,10 +12,10 @@ Example deployment with the required variables:
 
 This snippet will deploy two set of runners:
 
-  1. Amd set (instances types ["c6i.xlarge", "c6a.xlarge"])
-  2. Arm set (instances types ["c6g.xlarge", "t4g.xlarge"])
+  1. x64 set (instances types ["c6i.xlarge", "c6a.xlarge"])
+  2. arm64 set (instances types ["c6g.xlarge", "t4g.xlarge"])
 
-each have a max count of 5 runners and an idle configuration to have 3 idle runners each during office hours (Zurich time zone)
+each have a max count of 15 runners and an idle configuration to have 1 idle/warm runner each during office hours (8am-7pm Zurich time)
 
 ```hcl
 module "example_multi_runner" {
@@ -23,16 +25,23 @@ module "example_multi_runner" {
   github_app_key_base64     = "..."
   vpc_id                    = "..."
   subnet_ids                = "..."
+  runners = {
+    team-red-x64 = {
+      architecture       = "x64"
+      labels             = ["team-red", "spot"]
+      use_spot_instances = true
+      instance_types     = ["c6i.large"]
+    }
+  }
 }
 ```
 
 You can select the runners in a github workflow with:
 
 ```yaml
-# x64 runner
-runs-on: ["self-hosted", "linux", "x64", "multi-runner"]
-# arm64 runner
-runs-on: ["self-hosted", "linux", "arm64", "multi-runner"]
+runs-on: ["self-hosted", "linux", "x64", "team-red", "spot"]
+# or for arm64 arch
+runs-on: ["self-hosted", "linux", "arm64", "team-red", "spot"]
 ```
 
 The labels used by the runners are set as a Terraform output `runner_labels`
@@ -105,27 +114,19 @@ In order to update the upstream module version we need to:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_amd_instance_types"></a> [amd\_instance\_types](#input\_amd\_instance\_types) | on demand spot amd/intel instances | `list(string)` | <pre>[<br>  "c6i.xlarge",<br>  "c6a.xlarge"<br>]</pre> | no |
-| <a name="input_arm_instance_types"></a> [arm\_instance\_types](#input\_arm\_instance\_types) | on demand spot arm64 instances | `list(string)` | <pre>[<br>  "c6g.xlarge",<br>  "t4g.xlarge"<br>]</pre> | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | aws zone where to host the github actions runners | `string` | `"eu-central-1"` | no |
-| <a name="input_deploy_amd"></a> [deploy\_amd](#input\_deploy\_amd) | determine if the amd runners will be deployed (if both var.deploy\_amd and var.deploy\_arm are false the module will deploy the amd runners anyway) | `bool` | `true` | no |
-| <a name="input_deploy_arm"></a> [deploy\_arm](#input\_deploy\_arm) | determine if the arm runners will be deployed | `bool` | `false` | no |
-| <a name="input_enable_ephemeral_runners"></a> [enable\_ephemeral\_runners](#input\_enable\_ephemeral\_runners) | Flag to enable 'ephemeral' runners rather than persistent. | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment this resource will be deployed in. | `string` | n/a | yes |
-| <a name="input_github_app_key_base64"></a> [github\_app\_key\_base64](#input\_github\_app\_key\_base64) | Github app key. Ensure the key is the base64-encoded `.pem` file (the output of `base64 app.private-key.pem`, not the content of `private-key.pem`). | `string` | n/a | yes |
+| <a name="input_github_app_key_base64"></a> [github\_app\_key\_base64](#input\_github\_app\_key\_base64) | Github app private key. Ensure this value is the entire base64-encoded `.pem` file (e.g. the output of `base64 app.private-key.pem`), not its content. | `string` | n/a | yes |
 | <a name="input_github_app_multirunner_id"></a> [github\_app\_multirunner\_id](#input\_github\_app\_multirunner\_id) | id of the github app | `string` | n/a | yes |
 | <a name="input_github_org"></a> [github\_org](#input\_github\_org) | Name of the Github organization, owning the runners. Required only if specified with ephemeral runners | `string` | `null` | no |
-| <a name="input_idle_config"></a> [idle\_config](#input\_idle\_config) | List of time period that can be defined as cron expression to keep a minimum amount of runners active instead of scaling down to 0. By defining this list you can ensure that in time periods that match the cron expression within 5 seconds a runner is kept idle. | <pre>list(object({<br>    cron      = optional(string, "* 8-18 ? * 1-5") # cron schedule<br>    timeZone  = optional(string, "Europe/Zurich")<br>    idleCount = optional(number, 1)<br>  }))</pre> | <pre>[<br>  {<br>    "cron": "* 8-18 ? * 1-5",<br>    "idleCount": 1,<br>    "timeZone": "Europe/Zurich"<br>  }<br>]</pre> | no |
 | <a name="input_instance_allocation_strategy"></a> [instance\_allocation\_strategy](#input\_instance\_allocation\_strategy) | allocation strategy for spot instances | `string` | `"price-capacity-optimized"` | no |
-| <a name="input_instance_target_capacity_type"></a> [instance\_target\_capacity\_type](#input\_instance\_target\_capacity\_type) | Default lifecyle used runner instances, can be either `spot` or `on-demand`. | `string` | `"spot"` | no |
 | <a name="input_log_retention_in_days"></a> [log\_retention\_in\_days](#input\_log\_retention\_in\_days) | Specifies the number of days you want to retain log events for the lambda log group. Possible values are: 0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653. | `number` | `7` | no |
 | <a name="input_runner_group_name"></a> [runner\_group\_name](#input\_runner\_group\_name) | github actions runner group to attach the agents to | `string` | `"Infrastructure-Repository-Deployment"` | no |
 | <a name="input_runner_iam_role_policy_arns"></a> [runner\_iam\_role\_policy\_arns](#input\_runner\_iam\_role\_policy\_arns) | Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role | `list(string)` | `[]` | no |
-| <a name="input_runner_labels"></a> [runner\_labels](#input\_runner\_labels) | List of string of labels to assign to the runners. The runner architecture, os and 'self-hosted' will be automatically added by the module (x64 or arm64) | `list(string)` | <pre>[<br>  "multi-runner"<br>]</pre> | no |
 | <a name="input_runner_log_files"></a> [runner\_log\_files](#input\_runner\_log\_files) | Replaces the original module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object(<br>    {<br>      log_group_name   = string<br>      prefix_log_group = bool<br>      file_path        = string<br>      log_stream_name  = string<br>    }<br>  ))</pre> | <pre>[<br>  {<br>    "file_path": "/var/log/syslog",<br>    "log_group_name": "syslog",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/var/log/user-data.log",<br>    "log_group_name": "user_data",<br>    "log_stream_name": "{instance_id}/user_data",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/home/runners/actions-runner/_diag/Runner_**.log",<br>    "log_group_name": "runner",<br>    "log_stream_name": "{instance_id}/runner",<br>    "prefix_log_group": true<br>  }<br>]</pre> | no |
-| <a name="input_runners_maximum_count"></a> [runners\_maximum\_count](#input\_runners\_maximum\_count) | max numbers of runners to keep per architecture | `number` | `15` | no |
+| <a name="input_runners"></a> [runners](#input\_runners) | runners = {<br>      architecture: Must be either "x64" or "arm64"<br>      labels: List of extra labels to attach to the runner. "self-hosted", os and architecture labels are attached by default. Make sure this field is unique among the runners you host.<br>      idle\_config: List of objects specifying the schedule for keeping runners idle/warm<br>      maximum\_count: Number of maximum concurrent runners that can be spawned<br>      ephemeral: Boolean for selecting the type of runner<br>      use\_spot\_instances: Boolean for using spot EC2 instances instead of on-demand<br>      os: linux or windows. Operating system<br>    } | <pre>map(object({<br>    architecture   = string # x64 / arm64<br>    labels         = list(string)<br>    instance_types = list(string)<br>    idle_config = optional(list(object({<br>      cron      = optional(string, "* 8-18 ? * 1-5") # cron schedule<br>      timeZone  = optional(string, "Europe/Zurich")<br>      idleCount = optional(number, 1)<br>      })), [{<br>      cron      = "* 8-18 ? * 1-5"<br>      timeZone  = "Europe/Zurich"<br>      idleCount = 1<br>    }])<br>    maximum_count      = optional(number, 15)<br>    ephemeral          = optional(bool, false)<br>    use_spot_instances = optional(bool, false)<br>    os                 = optional(string, "linux") # linux / windows<br>  }))</pre> | <pre>{<br>  "runner-1": {<br>    "architecture": "x64",<br>    "instance_types": [<br>      "c6a.xlarge",<br>      "c6i.xlarge"<br>    ],<br>    "labels": [<br>      "multi-runner"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The set of subnets where to deploy the runners | `list(string)` | n/a | yes |
-| <a name="input_unique_prefix"></a> [unique\_prefix](#input\_unique\_prefix) | The unique prefix used for naming resources. | `string` | n/a | yes |
+| <a name="input_unique_prefix"></a> [unique\_prefix](#input\_unique\_prefix) | The unique prefix used for naming AWS resources. | `string` | n/a | yes |
 | <a name="input_userdata_post_install"></a> [userdata\_post\_install](#input\_userdata\_post\_install) | Script to be ran after the GitHub Actions runner is installed on the EC2 instances | `string` | `""` | no |
 | <a name="input_userdata_pre_install"></a> [userdata\_pre\_install](#input\_userdata\_pre\_install) | Script to be ran before the GitHub Actions runner is installed on the EC2 instances | `string` | `""` | no |
 | <a name="input_volume_size"></a> [volume\_size](#input\_volume\_size) | EBS volume size mounted to runner instance | `number` | `40` | no |
