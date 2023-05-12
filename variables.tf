@@ -98,13 +98,13 @@ variable "runners" {
     labels         = list(string)
     instance_types = list(string)
     idle_config = optional(list(object({
-      cron      = optional(string, "* 8-18 ? * Mon-Fri") # AWS eventbridge cron schedule
-      poolCron  = optional(string, "* 8-18 ? * 1-5")     # cron schedule parsed by CronParser (for pool)
+      cron      = optional(string, "* 8-18 ? * 1-5")     # AWS eventbridge cron schedule
+      poolCron  = optional(string, "* 8-18 ? * Mon-Fri") # cron schedule parsed by CronParser (for pool)
       timeZone  = optional(string, "Europe/Zurich")
       idleCount = optional(number, 1)
       })), [{
-      cron      = "* 8-18 ? * Mon-Fri"
-      poolCron  = "* 8-18 ? * 1-5 *"
+      cron      = "* 8-18 ? * 1-5"
+      poolCron  = "* 8-18 ? * Mon-Fri *"
       timeZone  = "Europe/Zurich"
       idleCount = 1
     }])
