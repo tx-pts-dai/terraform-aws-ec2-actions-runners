@@ -7,7 +7,6 @@ locals {
 
   runner_base_config = {
     instance_allocation_strategy            = var.instance_allocation_strategy
-    enable_runner_detailed_monitoring       = true
     enable_ssm_on_runners                   = true
     enable_organization_runners             = local.org_runners
     delay_webhook_event                     = 0
@@ -69,7 +68,7 @@ locals {
     })
     matcherConfig = {
       labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], local.labels[runner_name])]
-      exactMatch    = true # TODO: test with false
+      exactMatch    = true
     }
     ami_filter = {
       name = local.runners_ami_filters[runner.architecture]
