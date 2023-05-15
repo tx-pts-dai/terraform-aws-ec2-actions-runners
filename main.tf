@@ -14,6 +14,7 @@ locals {
     runner_group_name                       = var.runner_group_name
     runner_iam_role_managed_policy_arns     = var.runner_iam_role_policy_arns
 
+    # SQS queue to retry failed scale-up attempts
     redrive_policy_build_queue = {
       enabled         = true
       maxReceiveCount = 50 # 50 retries every 30 seconds => 25 minutes
