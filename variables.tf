@@ -1,5 +1,5 @@
 variable "unique_prefix" {
-  description = "The unique prefix used for naming resources."
+  description = "The unique prefix used for naming AWS resources."
   type        = string
 }
 
@@ -14,44 +14,20 @@ variable "github_app_multirunner_id" {
 }
 
 variable "github_app_key_base64" {
-  description = "Github app key. Ensure the key is the base64-encoded `.pem` file (the output of `base64 app.private-key.pem`, not the content of `private-key.pem`)."
+  description = "Github app private key. Ensure this value is the entire base64-encoded `.pem` file (e.g. the output of `base64 app.private-key.pem`), not its content."
   type        = string
 }
 
-variable "arm_instance_types" {
-  description = "on demand spot arm64 instances"
-  type        = list(string)
-  # c6g.xlarge = 8 GB - 4 CPU 
-  # t4g.xlarge = 16 GB - 4 CPU burstable
-  default = ["c6g.xlarge", "t4g.xlarge"]
-}
-
-variable "amd_instance_types" {
-  description = "on demand spot amd/intel instances"
-  type        = list(string)
-
-  # c6i.xlarge = 8 GB - 4 CPU
-  # c6a.xlarge = 8 GB - 4 CPU
-  # t3a.xlarge = 16 GB - 4 CPU burstable
-  # t3.xlarge = 16 GB - 4 CPU burstable
-  default = ["c6i.xlarge", "c6a.xlarge"]
+variable "github_org" {
+  description = "Name of the Github organization, owning the runners. Required only if specified with ephemeral runners"
+  type        = string
+  default     = null
 }
 
 variable "instance_allocation_strategy" {
   description = "allocation strategy for spot instances"
   type        = string
   default     = "price-capacity-optimized"
-}
-
-variable "instance_target_capacity_type" {
-  description = "Default lifecyle used runner instances, can be either `spot` or `on-demand`."
-  type        = string
-  default     = "spot"
-
-  validation {
-    condition     = contains(["spot", "on-demand"], var.instance_target_capacity_type)
-    error_message = "The instance target capacity should be either spot or on-demand."
-  }
 }
 
 variable "runner_iam_role_policy_arns" {
@@ -64,13 +40,6 @@ variable "runner_group_name" {
   description = "github actions runner group to attach the agents to"
   type        = string
   default     = "Infrastructure-Repository-Deployment"
-}
-
-
-variable "runners_maximum_count" {
-  description = "max numbers of runners to keep per architecture"
-  type        = number
-  default     = 5
 }
 
 variable "aws_region" {
@@ -117,50 +86,53 @@ variable "runner_log_files" {
   ]
 }
 
-variable "idle_config" {
-  description = "List of time period that can be defined as cron expression to keep a minimum amount of runners active instead of scaling down to 0. By defining this list you can ensure that in time periods that match the cron expression within 5 seconds a runner is kept idle."
-  type = list(object({
-    cron      = optional(string, "* * 8-19 * * 1-5") # cron schedule
-    timeZone  = optional(string, "Europe/Zurich")
-    idleCount = optional(number, 1)
-  }))
-  default = [
-    {
-      cron      = "* * 8-19 * * 1-5"
-      timeZone  = "Europe/Zurich"
-      idleCount = 1
-    }
-  ]
-}
-
 variable "log_retention_in_days" {
   description = "Specifies the number of days you want to retain log events for the lambda log group. Possible values are: 0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653."
   type        = number
   default     = 7
 }
 
-variable "deploy_amd" {
-  description = "determine if the amd runners will be deployed (if both var.deploy_amd and var.deploy_arm are false the module will deploy the amd runners anyway)"
-  type        = bool
-  default     = true
-}
-variable "deploy_arm" {
-  description = "determine if the arm runners will be deployed"
-  type        = bool
-  default     = false
+variable "runners" {
+  type = map(object({
+    architecture   = string # x64 / arm64
+    labels         = list(string)
+    instance_types = list(string)
+    idle_config = optional(list(object({
+      cron      = optional(string, "* * 8-18 ? * 1-5")   # cron schedule parsed by CronParser (for pool)
+      poolCron  = optional(string, "* 8-18 ? * Mon-Fri") # AWS eventbridge cron schedule
+      timeZone  = optional(string, "Europe/Zurich")
+      idleCount = optional(number, 1)
+      })), [{
+      cron      = "* * 8-18 ? * 1-5" # Important to specify also the seconds or this won't work
+      poolCron  = "* 8-18 ? * Mon-Fri *"
+      timeZone  = "Europe/Zurich"
+      idleCount = 1
+    }])
+    maximum_count      = optional(number, 15)
+    ephemeral          = optional(bool, false)
+    use_spot_instances = optional(bool, false)
+    os                 = optional(string, "linux") # linux / windows
+  }))
+  default = {
+    "runner-1" = {
+      architecture   = "x64"
+      labels         = ["multi-runner"]
+      instance_types = ["c6a.xlarge", "c6i.xlarge"]
+    }
+  }
+  description = <<EOT
+    runners = {
+      architecture: Must be either "x64" or "arm64"
+      labels: List of extra labels to attach to the runner. "self-hosted", os and architecture labels are attached by default. Make sure this field is unique among the runners you host.
+      idle_config: List of objects specifying the schedule for keeping runners idle/warm
+      maximum_count: Number of maximum concurrent runners that can be spawned
+      ephemeral: Boolean for selecting the type of runner
+      use_spot_instances: Boolean for using spot EC2 instances instead of on-demand
+      os: linux or windows. Operating system
+    }
+  EOT
 }
 
-variable "runner_labels" {
-  description = "List of string of labels to assign to the runners. The runner architecture, os and 'self-hosted' will be automatically added by the module (x64 or arm64)"
-  default     = ["multi-runner"]
-  type        = list(string)
-}
-
-variable "enable_ephemeral_runners" {
-  description = "Flag to enable 'ephemeral' runners rather than persistent."
-  default     = false
-  type        = bool
-}
 
 variable "userdata_pre_install" {
   description = "Script to be ran before the GitHub Actions runner is installed on the EC2 instances"
