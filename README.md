@@ -6,6 +6,8 @@ The goal of this wrapper is to solve one simple problem: the deployment of a bas
 
 Ephemeral and persistent runner configurations are both possible as well as `x64` and `arm64`. They are configurable with their respective parameters `runner.ephemeral` and `runner.architecture`.
 
+By default, a single set of persistent, x64 runners with a minimum size of 1 is created.
+
 ## Usage
 
 Example deployment with the required variables:
@@ -15,7 +17,7 @@ This snippet will deploy two set of runners:
   1. x64 with labels `["self-hosted", "linux", "x64", "team-red", "spot"]`
   2. arm64 with labels `["self-hosted", "linux", "arm64", "team-blue", "on-demand"]`
 
-each have a max count of 15 runners and an idle configuration to have 1 idle/warm runner each during office hours (8am-7pm Zurich time)
+each have a default maximum count of 15 runners and 1 idle/warm runner each during office hours (8am-7pm Zurich time)
 
 ```hcl
 module "example_multi_runner" {
@@ -49,6 +51,8 @@ runs-on: ["self-hosted", "linux", "x64", "team-red", "spot"]
 # or for arm64 arch
 runs-on: ["self-hosted", "linux", "arm64", "team-blue", "on-demand"]
 ```
+
+Keep in mind that a subset of labels can be used too, for example you can use `["self-hosted", "linux"]` to select either one or the other set indifferently.
 
 The labels used by the runners are set as a Terraform output `runner_labels`. Our module adds the following labels additionally to the one you specify with `runner.labels`:
 
