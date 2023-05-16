@@ -16,15 +16,10 @@ echo deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
-    gnupg \
-    lsb-release \
     uidmap \
-    iptables \
     jq \
     curl \
-    wget \
     git \
-    python3 \
     unzip \
     zip \
     build-essential \
