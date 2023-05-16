@@ -59,7 +59,7 @@ usermod -aG docker $USER_NAME
 
 # add user runners to sudo group
 usermod -aG sudo $USER_NAME
-
+echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-extra-users
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
 
 ${install_runner}
