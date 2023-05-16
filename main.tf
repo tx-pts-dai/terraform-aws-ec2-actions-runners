@@ -1,8 +1,8 @@
 locals {
   org_runners = true
   runners_ami_filters = {
-    "arm64" = ["amzn2-ami-kernel-5.*-hvm-*-arm64-gp2"]
-    "x64"   = ["amzn2-ami-kernel-5.*-hvm-*-x86_64-gp2"]
+    "arm64" = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
+    "x64"   = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   runner_base_config = {
@@ -25,7 +25,7 @@ locals {
     userdata_template     = "${path.module}/templates/user_data.sh"
     userdata_pre_install  = var.userdata_pre_install
     userdata_post_install = var.userdata_post_install
-    ami_owners            = ["137112412989"] # amazon
+    ami_owners            = ["099720109477"] # canonical
 
     block_device_mappings = [
       {
