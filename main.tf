@@ -1,8 +1,20 @@
 locals {
   org_runners = true
-  runners_ami_filters = {
-    "arm64" = ["amzn2-ami-kernel-5.*-hvm-*-arm64-gp2"]
-    "x64"   = ["amzn2-ami-kernel-5.*-hvm-*-x86_64-gp2"]
+  runners_ami = {
+    amazonlinux2 = {
+      owners = ["137112412989"] # amazon
+      filters = {
+        "arm64" = ["amzn2-ami-kernel-5.*-hvm-*-arm64-gp2"]
+        "x64"   = ["amzn2-ami-kernel-5.*-hvm-*-x86_64-gp2"]
+      }
+    }
+    ubuntu = {
+      owners = ["099720109477"] # canonical
+      runners_ami_filters = {
+        "arm64" = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
+        "x64"   = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+      }
+    }
   }
 
   runner_base_config = {
@@ -22,10 +34,8 @@ locals {
 
     runner_run_as         = "runners"
     runner_log_files      = var.runner_log_files
-    userdata_template     = "${path.module}/templates/user_data.sh"
     userdata_pre_install  = var.userdata_pre_install
     userdata_post_install = var.userdata_post_install
-    ami_owners            = ["137112412989"] # amazon
 
     block_device_mappings = [
       {
@@ -54,6 +64,8 @@ locals {
       enable_job_queued_check         = runner.ephemeral ? true : null
       runner_os                       = runner.os
       runner_architecture             = runner.architecture
+      ami_owners                      = local.runners_ami[runner.base_ami].owners
+      userdata_template               = "${path.module}/templates/user_data-${runner.base_ami}.sh"
       instance_types                  = runner.instance_types
       runner_extra_labels             = join(",", local.labels[runner_name])
       runners_maximum_count           = runner.maximum_count
@@ -72,7 +84,7 @@ locals {
       exactMatch    = true
     }
     ami_filter = {
-      name = local.runners_ami_filters[runner.architecture]
+      name = local.runners_ami[runner.base_ami].filters[runner.architecture]
     }
   } }
 }
