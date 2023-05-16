@@ -10,7 +10,7 @@ locals {
     }
     ubuntu = {
       owners = ["099720109477"] # canonical
-      runners_ami_filters = {
+      filters = {
         "arm64" = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"]
         "x64"   = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
       }
