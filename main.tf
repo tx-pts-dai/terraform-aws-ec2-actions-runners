@@ -83,6 +83,7 @@ locals {
       # therefore we set it to once every 1h
       scale_down_schedule_expression = runner.ephemeral ? "cron(0 * * * ? *)" : null
     })
+
     matcherConfig = {
       labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], local.labels[runner_name])]
       exactMatch    = true
