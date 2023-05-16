@@ -111,7 +111,8 @@ variable "runners" {
     maximum_count      = optional(number, 15)
     ephemeral          = optional(bool, false)
     use_spot_instances = optional(bool, false)
-    os                 = optional(string, "linux") # linux / windows
+    os                 = optional(string, "linux")        # linux / windows
+    base_ami           = optional(string, "amazonlinux2") # can assume values "amazonlinux2" or "ubuntu"
   }))
   default = {
     "runner-1" = {
