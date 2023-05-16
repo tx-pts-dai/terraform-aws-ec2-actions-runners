@@ -26,12 +26,6 @@ locals {
     runner_group_name                       = var.runner_group_name
     runner_iam_role_managed_policy_arns     = var.runner_iam_role_policy_arns
 
-    # SQS queue to retry failed scale-up attempts
-    redrive_policy_build_queue = {
-      enabled         = true
-      maxReceiveCount = 50 # 50 retries every 30 seconds => 25 minutes
-    }
-
     runner_run_as         = "runners"
     runner_log_files      = var.runner_log_files
     userdata_pre_install  = var.userdata_pre_install
@@ -55,22 +49,32 @@ locals {
 
   labels = { for runner_name, runner in var.runners : runner_name => concat(runner.labels, runner.use_spot_instances ? ["spot"] : ["on-demand"]) }
 
+  # variable is `multi_runner_config` in https://github.com/philips-labs/terraform-aws-github-runner/blob/main/modules/multi-runner/variables.tf
   runners = { for runner_name, runner in var.runners : "${runner.os}-${runner_name}" => {
-    enable_fifo_build_queue = !local.org_runners # suggested only for repo-level runners
+    fifo = !local.org_runners # suggested only for repo-level runners
+    # SQS queue to retry failed scale-up attempts
+    redrive_policy_build_queue = {
+      enabled         = true
+      maxReceiveCount = 50 # 50 retries every 30 seconds => 25 minutes
+    }
+
     runner_config = merge(local.runner_base_config, {
-      instance_target_capacity_type   = runner.use_spot_instances ? "spot" : "on-demand"
       create_service_linked_role_spot = runner.use_spot_instances
+      instance_target_capacity_type   = runner.use_spot_instances ? "spot" : "on-demand"
+      instance_types                  = runner.instance_types
       enable_ephemeral_runners        = runner.ephemeral
       enable_job_queued_check         = runner.ephemeral ? true : null
       runner_os                       = runner.os
       runner_architecture             = runner.architecture
       ami_owners                      = local.runners_ami[runner.base_ami].owners
-      userdata_template               = "${path.module}/templates/user_data-${runner.base_ami}.sh"
-      instance_types                  = runner.instance_types
-      runner_extra_labels             = join(",", local.labels[runner_name])
-      runners_maximum_count           = runner.maximum_count
-      idle_config                     = runner.ephemeral ? [] : runner.idle_config
-      pool_runner_owner               = runner.ephemeral ? var.github_org : null
+      ami_filter = {
+        name = local.runners_ami[runner.base_ami].filters[runner.architecture]
+      }
+      userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
+      runner_extra_labels   = join(",", local.labels[runner_name])
+      runners_maximum_count = runner.maximum_count
+      idle_config           = runner.ephemeral ? [] : runner.idle_config
+      pool_runner_owner     = runner.ephemeral ? var.github_org : null
       pool_config = runner.ephemeral ? [for config in runner.idle_config : {
         size                = config.idleCount
         schedule_expression = "cron(${config.poolCron})" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
@@ -82,9 +86,6 @@ locals {
     matcherConfig = {
       labelMatchers = [concat(["self-hosted", runner.os, runner.architecture], local.labels[runner_name])]
       exactMatch    = true
-    }
-    ami_filter = {
-      name = local.runners_ami[runner.base_ami].filters[runner.architecture]
     }
   } }
 }
