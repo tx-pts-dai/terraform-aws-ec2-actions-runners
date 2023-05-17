@@ -30,21 +30,6 @@ locals {
     runner_log_files      = var.runner_log_files
     userdata_pre_install  = var.userdata_pre_install
     userdata_post_install = var.userdata_post_install
-
-    block_device_mappings = [
-      {
-        device_name           = "/dev/xvda"
-        delete_on_termination = true
-        volume_type           = "gp3"
-        volume_size           = var.volume_size
-        iops                  = null
-        encrypted             = false
-        kms_key_id            = null
-        snapshot_id           = null
-        throughput            = null
-      }
-    ]
-
   }
 
   labels = { for runner_name, runner in var.runners : runner_name => concat(runner.labels, runner.use_spot_instances ? ["spot"] : ["on-demand"]) }
@@ -70,6 +55,19 @@ locals {
       ami_filter = {
         name = local.runners_ami[runner.base_ami].filters[runner.architecture]
       }
+      block_device_mappings = [
+        {
+          device_name           = (runner.base_ami == "amazonlinux2") ? "/dev/xvda" : "/dev/sda1"
+          delete_on_termination = true
+          volume_type           = "gp3"
+          volume_size           = var.volume_size
+          encrypted             = false
+          iops                  = null
+          kms_key_id            = null
+          snapshot_id           = null
+          throughput            = null
+        }
+      ]
       userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
       runner_extra_labels   = join(",", local.labels[runner_name])
       runners_maximum_count = runner.maximum_count
