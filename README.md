@@ -67,7 +67,11 @@ IMPORTANT: When destroying the resources created by this module, there could be 
 
 Please follow the instruction on the original repo [Setup Github Application](https://github.com/philips-labs/terraform-aws-github-runner#setup-github-app-part-1)
 
-The `webhook_endpoint` and `webhook_secret` can be obtained as output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint` (or `..._secret`)
+The `webhook_endpoint` can be obtained as output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint` or directly from within the github organization apps setting of [unity-dev-multirunner](https://github.com/organizations/DND-IT/settings/installations)
+
+The `webhook_secret` can be obtained in two ways:
+1. As output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint_secret`. This requires a valid terraform initialization.
+2. From SSM: `aws ssm get-parameter --name /github-action-runners/dev-non-spot/app/github_app_webhook_secret --with-decryption --output json`, note that this is an ecrypted parameters, therefore you need the flag `--with-decryption`. This requires a valid access to aws.
 
 ## Contributing
 
