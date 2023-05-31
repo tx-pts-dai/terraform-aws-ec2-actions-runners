@@ -71,9 +71,9 @@ The `webhook_endpoint` can be obtained as output from the module via `terraform 
 
 The `webhook_secret` can be obtained in two ways:
 1. As output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint_secret`. This requires a valid terraform initialization.
-2. From SSM: `aws ssm get-parameter --name /github-action-runners/MY_RUNNERS_UNIQUE_PREFIX/app/github_app_webhook_secret --with-decryption --output json`, note that this is an ecrypted parameters, therefore you need the flag `--with-decryption`. This requires a valid access to aws.
+2. From SSM: `aws ssm get-parameter --name /github-action-runners/MY_RUNNERS_UNIQUE_PREFIX/app/github_app_webhook_secret --with-decryption --output json`, note that this is an ecrypted parameter, therefore you need the flag `--with-decryption`. This requires a valid access to aws.
 
-The Github App private key is also stored encrypted in ssm, it can be retrieved with the following command:
+The Github App private key is also stored encrypted in ssm, if needed it can be retrieved with the following command:
 `aws ssm get-parameter --name /github-action-runners/MY_RUNNERS_UNIQUE_PREFIX/app/github_app_key_base64 --with-decryption`
 
 ## Contributing
