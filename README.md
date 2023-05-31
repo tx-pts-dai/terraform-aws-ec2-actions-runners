@@ -67,7 +67,7 @@ IMPORTANT: When destroying the resources created by this module, there could be 
 
 Please follow the instruction on the original repo [Setup Github Application](https://github.com/philips-labs/terraform-aws-github-runner#setup-github-app-part-1)
 
-The `webhook_endpoint` can be obtained as output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint` or directly from within the github organization apps settings.
+The `webhook_endpoint` can be obtained as output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint`.
 
 The `webhook_secret` can be obtained in two ways:
 1. As output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint_secret`. This requires a valid terraform initialization.
