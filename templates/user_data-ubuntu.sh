@@ -25,7 +25,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     docker-ce \
     docker-ce-cli \
-    containerd.io
+    containerd.io \
+    parallel
 
 # Install AWS CLI v2 (v1 is the default on AmazonLinux2). Using parenthesis () to do everything in subshell.
 (

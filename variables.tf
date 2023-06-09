@@ -113,6 +113,11 @@ variable "runners" {
     use_spot_instances = optional(bool, false)
     os                 = optional(string, "linux")        # linux / windows
     base_ami           = optional(string, "amazonlinux2") # can assume values "amazonlinux2" or "ubuntu"
+    # custom_ami overrides base_ami
+    custom_ami = optional(object({
+      name  = string
+      owner = string
+    }))
   }))
   default = {
     "runner-1" = {

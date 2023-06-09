@@ -51,13 +51,13 @@ locals {
       enable_job_queued_check         = runner.ephemeral ? true : null
       runner_os                       = runner.os
       runner_architecture             = runner.architecture
-      ami_owners                      = local.runners_ami[runner.base_ami].owners
+      ami_owners                      = runner.custom_ami != null ? [runner.custom_ami.owner] : local.runners_ami[runner.base_ami].owners
       ami_filter = {
-        name = local.runners_ami[runner.base_ami].filters[runner.architecture]
+        name = runner.custom_ami != null ? [runner.custom_ami.name] : local.runners_ami[runner.base_ami].filters[runner.architecture]
       }
       block_device_mappings = [
         {
-          device_name           = (runner.base_ami == "amazonlinux2") ? "/dev/xvda" : "/dev/sda1"
+          device_name           = (runner.custom_ami == null && runner.base_ami == "amazonlinux2") ? "/dev/xvda" : "/dev/sda1"
           delete_on_termination = true
           volume_type           = "gp3"
           volume_size           = var.volume_size
@@ -68,6 +68,7 @@ locals {
           throughput            = null
         }
       ]
+      enable_userdata       = runner.custom_ami == null
       userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
       runner_extra_labels   = join(",", local.labels[runner_name])
       runners_maximum_count = runner.maximum_count
