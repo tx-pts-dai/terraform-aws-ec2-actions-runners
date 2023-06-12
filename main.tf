@@ -68,12 +68,13 @@ locals {
           throughput            = null
         }
       ]
-      enable_userdata       = runner.custom_ami == null
-      userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
-      runner_extra_labels   = join(",", local.labels[runner_name])
-      runners_maximum_count = runner.maximum_count
-      idle_config           = runner.ephemeral ? [] : runner.idle_config
-      pool_runner_owner     = runner.ephemeral ? var.github_org : null
+      enable_userdata               = runner.custom_ami == null
+      userdata_template             = "${path.module}/templates/user_data-${runner.base_ami}.sh"
+      enable_runner_binaries_syncer = runner.custom_ami == null
+      runner_extra_labels           = join(",", local.labels[runner_name])
+      runners_maximum_count         = runner.maximum_count
+      idle_config                   = runner.ephemeral ? [] : runner.idle_config
+      pool_runner_owner             = runner.ephemeral ? var.github_org : null
       pool_config = runner.ephemeral ? [for config in runner.idle_config : {
         size                = config.idleCount
         schedule_expression = "cron(${config.poolCron})" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
