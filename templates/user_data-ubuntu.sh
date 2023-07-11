@@ -60,6 +60,15 @@ usermod -aG docker $USER_NAME
 # add user runners to sudo group
 usermod -aG sudo $USER_NAME
 echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-extra-users
+
+# Auto-login to DockerHub if credentials are passed in the pre_install step
+if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
+    echo "DockerHub username and password detected. Logging in automatically..."
+    echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+    mkdir -p /home/$USER_NAME/.docker/config.json
+    cp -f "$HOME/.docker/config.json" /home/$USER_NAME/.docker/config.json
+fi
+
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
 
 # assign to `user_name` because install_runner template uses it.
