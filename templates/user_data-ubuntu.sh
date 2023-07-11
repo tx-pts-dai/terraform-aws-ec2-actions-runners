@@ -62,6 +62,9 @@ usermod -aG sudo $USER_NAME
 echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-extra-users
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
 
+# assign to `user_name` because install_runner template uses it.
+user_name="$USER_NAME"
+
 ${install_runner}
 
 # config runner for rootless docker
