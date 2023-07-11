@@ -67,7 +67,7 @@ if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
     docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
     # Copying credentials to `$USER_NAME` user
     mkdir -p /home/$USER_NAME/.docker
-    cp -f "$HOME/.docker/config.json" /home/$USER_NAME/.docker/config.json
+    cp -f "/root/.docker/config.json" /home/$USER_NAME/.docker/config.json
 fi
 
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
