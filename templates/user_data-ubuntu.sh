@@ -64,7 +64,8 @@ echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-extra-users
 # Auto-login to DockerHub if credentials are passed in the pre_install step
 if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
     echo "DockerHub username and password detected. Logging in automatically..."
-    echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+    docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+    # Copying credentials to `$USER_NAME` user
     mkdir -p /home/$USER_NAME/.docker
     cp -f "$HOME/.docker/config.json" /home/$USER_NAME/.docker/config.json
 fi
