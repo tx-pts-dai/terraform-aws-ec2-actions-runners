@@ -65,7 +65,7 @@ echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/10-extra-users
 if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
     echo "DockerHub username and password detected. Logging in automatically..."
     echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-    mkdir -p /home/$USER_NAME/.docker/config.json
+    mkdir -p /home/$USER_NAME/.docker
     cp -f "$HOME/.docker/config.json" /home/$USER_NAME/.docker/config.json
 fi
 
