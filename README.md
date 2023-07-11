@@ -137,6 +137,7 @@ In order to update the upstream module version we need to:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | aws zone where to host the github actions runners | `string` | `"eu-central-1"` | no |
+| <a name="input_dockerhub_credentials"></a> [dockerhub\_credentials](#input\_dockerhub\_credentials) | DockerHub username and password so that the runner is will automatically be logged in to DockerHub and have increased rate limits | <pre>object({<br>    username = string<br>    password = string<br>  })</pre> | `null` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment this resource will be deployed in. | `string` | n/a | yes |
 | <a name="input_github_app_key_base64"></a> [github\_app\_key\_base64](#input\_github\_app\_key\_base64) | Github app private key. Ensure this value is the entire base64-encoded `.pem` file (e.g. the output of `base64 app.private-key.pem`), not its content. | `string` | n/a | yes |
 | <a name="input_github_app_multirunner_id"></a> [github\_app\_multirunner\_id](#input\_github\_app\_multirunner\_id) | id of the github app | `string` | n/a | yes |

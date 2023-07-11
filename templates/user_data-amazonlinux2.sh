@@ -47,6 +47,11 @@ systemctl start docker
 # add user runners to docker group
 usermod -aG docker runners
 
+if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
+    echo "DockerHub username and password detected. Logging in automatically..."
+    echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+fi
+
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
 
 # assign to `user_name` because install_runner template uses it.

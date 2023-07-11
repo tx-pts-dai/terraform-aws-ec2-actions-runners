@@ -17,6 +17,13 @@ locals {
     }
   }
 
+  userdata_pre_install = var.dockerhub_credentials != null ? format(
+    "%v\n%v\n%v",
+    "DOCKERHUB_USERNAME=${var.dockerhub_credentials.username}",
+    "DOCKERHUB_PASSWORD=${var.dockerhub_credentials.password}",
+    var.userdata_pre_install
+  ) : var.userdata_pre_install
+
   runner_base_config = {
     instance_allocation_strategy            = var.instance_allocation_strategy
     enable_ssm_on_runners                   = true
@@ -28,7 +35,7 @@ locals {
 
     runner_run_as         = "runners"
     runner_log_files      = var.runner_log_files
-    userdata_pre_install  = var.userdata_pre_install
+    userdata_pre_install  = local.userdata_pre_install
     userdata_post_install = var.userdata_post_install
   }
 

@@ -156,3 +156,13 @@ variable "subnet_ids" {
   description = "The set of subnets where to deploy the runners"
   type        = list(string)
 }
+
+variable "dockerhub_credentials" {
+  description = "DockerHub username and password so that the runner is will automatically be logged in to DockerHub and have increased rate limits"
+  type = object({
+    username = string
+    password = string
+  })
+  default   = null
+  sensitive = true
+}
