@@ -50,10 +50,7 @@ usermod -aG docker runners
 # Auto-login to DockerHub if credentials are passed in the pre_install step
 if [ "$DOCKERHUB_USERNAME" != "" ] && [ "$DOCKERHUB_PASSWORD" != "" ]; then
     echo "DockerHub username and password detected. Logging in automatically..."
-    docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
-    # Copying credentials to `$USER_NAME` user
-    mkdir -p /home/$USER_NAME/.docker
-    cp -f "/root/.docker/config.json" /home/$USER_NAME/.docker/config.json
+    su $USER_NAME -c "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
 fi
 
 echo "INFO: installing github runner at $(date -u +%H:%M:%S)"
