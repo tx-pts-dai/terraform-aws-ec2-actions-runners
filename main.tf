@@ -78,7 +78,7 @@ locals {
       userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
       runner_extra_labels   = join(",", local.labels[runner_name])
       runners_maximum_count = runner.maximum_count
-      idle_config           = runner.ephemeral ? [] : runner.idle_config
+      idle_config           = runner.idle_config
       pool_runner_owner     = runner.ephemeral ? var.github_org : null
       pool_config = runner.ephemeral ? [for config in runner.idle_config : {
         size                = config.idleCount
