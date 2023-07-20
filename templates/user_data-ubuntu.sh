@@ -35,7 +35,7 @@ case $(uname -m) in
     arm)     yq_architecture="arm64" ;;
     aarch64) yq_architecture="arm64" ;;
 esac
-YQ_BINARY="yq_linux_${yq_architecture}"
+YQ_BINARY="yq_linux_$yq_architecture"
 wget https://github.com/mikefarah/yq/releases/download/$YQ_VERSION/$YQ_BINARY.tar.gz -O - |\
   tar xz && mv $YQ_BINARY /usr/bin/yq
 
