@@ -98,13 +98,13 @@ variable "runners" {
     labels         = list(string)
     instance_types = list(string)
     idle_config = optional(list(object({
-      cron      = optional(string, "* * 8-18 ? * 1-5")     # cron schedule parsed by CronParser (for pool)
-      poolCron  = optional(string, "* 8-18 ? * Mon-Fri *") # AWS eventbridge cron schedule
-      timeZone  = optional(string, "Europe/Zurich")
+      cron      = optional(string, "* * 8-18 ? * 1-5")     # cron schedule parsed by CronParser (used to keep idle runners up)
+      poolCron  = optional(string, "* 6-16 ? * Mon-Fri *") # AWS eventbridge cron schedule (used to keep runners pool up)
+      timeZone  = optional(string, "Europe/Zurich")        # Applied to 'cron' only, not 'poolCron'.
       idleCount = optional(number, 1)
       })), [{
       cron      = "* * 8-18 ? * 1-5" # Important to specify also the seconds or this won't work
-      poolCron  = "* 8-18 ? * Mon-Fri *"
+      poolCron  = "* 6-16 ? * Mon-Fri *"
       timeZone  = "Europe/Zurich"
       idleCount = 1
     }])
@@ -112,7 +112,7 @@ variable "runners" {
     ephemeral          = optional(bool, false)
     use_spot_instances = optional(bool, false)
     os                 = optional(string, "linux")        # linux / windows
-    base_ami           = optional(string, "amazonlinux2") # can assume values "amazonlinux2" or "ubuntu"
+    base_ami           = optional(string, "amazonlinux2") # amazonlinux2 / ubuntu
   }))
   default = {
     "runner-1" = {
