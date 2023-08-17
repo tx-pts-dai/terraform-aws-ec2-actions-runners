@@ -16,9 +16,7 @@ module "multi_runner" {
   role_path             = "/"
   instance_profile_path = "/"
 
-  tags = {
-    Environment = var.environment
-  }
+  tags = var.tags
 
   github_app = {
     key_base64     = var.github_app_key_base64

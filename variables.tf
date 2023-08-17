@@ -3,11 +3,6 @@ variable "unique_prefix" {
   type        = string
 }
 
-variable "environment" {
-  description = "The environment this resource will be deployed in."
-  type        = string
-}
-
 variable "github_app_multirunner_id" {
   description = "id of the github app "
   type        = string
@@ -165,4 +160,10 @@ variable "dockerhub_credentials" {
   })
   default   = null
   sensitive = true
+}
+
+variable "tags" {
+  description = "Map of tags to apply to all resources deployed from the module"
+  type        = map(string)
+  default     = {}
 }
