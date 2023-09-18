@@ -60,7 +60,7 @@ locals {
       runner_architecture             = runner.architecture
       ami_owners                      = local.runners_ami[runner.base_ami].owners
       ami_filter = {
-        state = "available"
+        state = ["available"]
         name  = local.runners_ami[runner.base_ami].filters[runner.architecture]
       }
       block_device_mappings = [
