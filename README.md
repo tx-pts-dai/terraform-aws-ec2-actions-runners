@@ -70,6 +70,7 @@ Please follow the instruction on the original repo [Setup Github Application](ht
 The `webhook_endpoint` can be obtained as output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint`.
 
 The `webhook_secret` can be obtained in two ways:
+
 1. As output from the module via `terraform output module.MY_MODULE_NAME.webhook_endpoint_secret`. This requires a valid terraform initialization.
 2. From SSM: `aws ssm get-parameter --name /github-action-runners/MY_RUNNERS_UNIQUE_PREFIX/app/github_app_webhook_secret --with-decryption --output json`, note that this is an ecrypted parameter, therefore you need the flag `--with-decryption`. This requires a valid access to aws.
 
@@ -103,7 +104,7 @@ In order to update the upstream module version we need to:
 
 1. Update versions in [`runners.tf`](./runners.tf) and [`lambdas/runners_lambdas.tf`](./lambdas/runners_lambdas.tf).
 1. Change directory into `lambdas` and run `terraform init` and `terraform apply`. This will download the latest .zip files needed for the different lambdas.
-1. Commit all of these changes.
+1. Commit all the changed files.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -124,7 +125,7 @@ In order to update the upstream module version we need to:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_multi_runner"></a> [multi\_runner](#module\_multi\_runner) | philips-labs/github-runner/aws//modules/multi-runner | 3.2.0 |
+| <a name="module_multi_runner"></a> [multi\_runner](#module\_multi\_runner) | philips-labs/github-runner/aws//modules/multi-runner | 3.6.1 |
 
 ## Resources
 
