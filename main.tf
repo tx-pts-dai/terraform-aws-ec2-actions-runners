@@ -11,8 +11,8 @@ locals {
     al2023 = {
       owners = ["137112412989"] # amazon
       filters = {
-        "arm64" = ["al2023-ami-kernel-6.*-arm64"]
-        "x64"   = ["al2023-ami-kernel-6.*-x86_64"]
+        "arm64" = ["al2023-ami-*-kernel-6.*-arm64"]
+        "x64"   = ["al2023-ami-*-kernel-6.*-x86_64"]
       }
     }
     ubuntu = {
