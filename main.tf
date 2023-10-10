@@ -72,7 +72,7 @@ locals {
       }
       block_device_mappings = [
         {
-          device_name           = (runner.base_ami == "amazonlinux2") ? "/dev/xvda" : "/dev/sda1"
+          device_name           = (runner.base_ami != "ubuntu") ? "/dev/xvda" : "/dev/sda1"
           delete_on_termination = true
           volume_type           = "gp3"
           volume_size           = var.volume_size
