@@ -80,7 +80,7 @@ locals {
           iops                  = null
           kms_key_id            = null
           snapshot_id           = null
-          throughput            = null
+          throughput            = runner.disk_throughput_mbps
         }
       ]
       userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"

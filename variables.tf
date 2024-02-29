@@ -103,17 +103,18 @@ variable "runners" {
       timeZone  = "Europe/Zurich"
       idleCount = 1
     }])
-    maximum_count      = optional(number, 15)
-    ephemeral          = optional(bool, false)
-    use_spot_instances = optional(bool, false)
-    os                 = optional(string, "linux")        # linux / windows
-    base_ami           = optional(string, "amazonlinux2") # amazonlinux2 / ubuntu
+    maximum_count        = optional(number, 15)
+    ephemeral            = optional(bool, false)
+    use_spot_instances   = optional(bool, false)
+    os                   = optional(string, "linux")        # linux / windows
+    base_ami             = optional(string, "amazonlinux2") # amazonlinux2 / ubuntu
+    disk_throughput_mbps = optional(number)                 # between 125 and 1000
   }))
   default = {
     "runner-1" = {
       architecture   = "x64"
       labels         = ["multi-runner"]
-      instance_types = ["c6a.xlarge", "c6i.xlarge"]
+      instance_types = ["c7a.xlarge", "c7i.xlarge", "c6a.xlarge", "c6i.xlarge"]
     }
   }
   description = <<EOT
