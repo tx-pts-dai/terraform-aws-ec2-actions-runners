@@ -111,7 +111,7 @@ variable "runners" {
     disk = optional(object({
       throughput_mbps = optional(number) # between 125 and 750
       volume_type     = optional(string, "gp3")
-    }))
+    }), {})
   }))
   default = {
     "runner-1" = {
