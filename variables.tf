@@ -108,12 +108,16 @@ variable "runners" {
     use_spot_instances = optional(bool, false)
     os                 = optional(string, "linux")        # linux / windows
     base_ami           = optional(string, "amazonlinux2") # amazonlinux2 / ubuntu
+    disk = optional(object({
+      throughput_mbps = optional(number) # between 125 and 750
+      volume_type     = optional(string, "gp3")
+    }))
   }))
   default = {
     "runner-1" = {
       architecture   = "x64"
       labels         = ["multi-runner"]
-      instance_types = ["c6a.xlarge", "c6i.xlarge"]
+      instance_types = ["c7a.xlarge", "c7i.xlarge", "c6a.xlarge", "c6i.xlarge"]
     }
   }
   description = <<EOT

@@ -74,13 +74,13 @@ locals {
         {
           device_name           = (runner.base_ami != "ubuntu") ? "/dev/xvda" : "/dev/sda1"
           delete_on_termination = true
-          volume_type           = "gp3"
+          volume_type           = runner.disk.volume_type
           volume_size           = var.volume_size
           encrypted             = false
           iops                  = null
           kms_key_id            = null
           snapshot_id           = null
-          throughput            = null
+          throughput            = runner.disk.throughput_mbps
         }
       ]
       userdata_template     = "${path.module}/templates/user_data-${runner.base_ami}.sh"
