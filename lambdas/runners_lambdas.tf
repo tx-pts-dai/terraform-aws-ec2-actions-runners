@@ -1,18 +1,18 @@
 module "lambdas" {
-  version = "v3.6.1"
+  version = "v5.11.0"
   source  = "philips-labs/github-runner/aws//modules/download-lambda"
   lambdas = [
     {
       name = "webhook"
-      tag  = "v3.6.1"
+      tag  = "v5.11.0"
     },
     {
       name = "runners"
-      tag  = "v3.6.1"
+      tag  = "v5.11.0"
     },
     {
       name = "runner-binaries-syncer"
-      tag  = "v3.6.1"
+      tag  = "v5.11.0"
     }
   ]
 }
