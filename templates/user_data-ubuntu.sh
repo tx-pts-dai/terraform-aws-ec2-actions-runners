@@ -26,7 +26,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     docker-ce \
     docker-ce-cli \
     containerd.io \
-    node
+    nodejs
 
 # Fixes https://github.com/hashicorp/setup-terraform/issues/84 for running Terraform
 ln -s /usr/bin/nodejs /usr/local/bin/node
