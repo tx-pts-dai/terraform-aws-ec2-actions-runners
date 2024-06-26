@@ -90,11 +90,11 @@ locals {
       pool_runner_owner     = runner.ephemeral ? var.github_org : null
       pool_config = runner.ephemeral ? [for config in runner.idle_config : {
         size                = config.idleCount
-        schedule_expression = "cron(${config.poolCron})" # every minute from 8:00-18:59, Monday through Friday, it keeps var.idle_count runners online
+        schedule_expression = "cron(${config.poolCron})"
       }] : []
       # if runners are ephemeral, scale-down function it's not needed because runners should get destroyed by itself after the run.
-      # therefore we set it to once every 1h
-      scale_down_schedule_expression = runner.ephemeral ? "cron(0 * * * ? *)" : null
+      # therefore we set it to once every 20min
+      scale_down_schedule_expression = runner.ephemeral ? "cron(*/20 * * * ? *)" : null
     })
 
     matcherConfig = {

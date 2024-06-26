@@ -106,8 +106,8 @@ variable "runners" {
     maximum_count      = optional(number, 15)
     ephemeral          = optional(bool, false)
     use_spot_instances = optional(bool, false)
-    os                 = optional(string, "linux")        # linux / windows
-    base_ami           = optional(string, "amazonlinux2") # amazonlinux2 / ubuntu
+    os                 = optional(string, "linux")  # linux / windows
+    base_ami           = optional(string, "al2023") # amazonlinux2 / ubuntu / al2023
     disk = optional(object({
       throughput_mbps = optional(number) # between 125 and 750
       volume_type     = optional(string, "gp3")
