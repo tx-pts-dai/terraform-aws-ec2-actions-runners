@@ -93,8 +93,8 @@ locals {
         schedule_expression = "cron(${config.poolCron})"
       }] : []
       # if runners are ephemeral, scale-down function it's not needed because runners should get destroyed by itself after the run.
-      # therefore we set it to once every 20min
-      scale_down_schedule_expression = runner.ephemeral ? "cron(*/20 * * * ? *)" : null
+      # therefore we set it to once every 30 min
+      scale_down_schedule_expression = runner.ephemeral ? "cron(*/30 * * * ? *)" : null
     })
 
     matcherConfig = {
