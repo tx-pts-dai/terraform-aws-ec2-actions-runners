@@ -25,7 +25,11 @@ dnf install -y \
     make \
     gcc \
     amazon-cloudwatch-agent \
-    docker
+    docker \
+    nodejs
+
+# Fixes https://github.com/hashicorp/setup-terraform/issues/84 for running Terraform
+ln -s /usr/bin/nodejs /usr/local/bin/node
 
 dnf install -y --allowerasing curl
   
