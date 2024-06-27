@@ -25,7 +25,11 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     docker-ce \
     docker-ce-cli \
-    containerd.io
+    containerd.io \
+    nodejs
+
+# Fixes https://github.com/hashicorp/setup-terraform/issues/84 for running Terraform
+ln -s /usr/bin/nodejs /usr/local/bin/node
 
 # Install 'yq'
 YQ_VERSION=v4.34.1

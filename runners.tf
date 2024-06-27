@@ -4,7 +4,7 @@ resource "random_id" "webhook_secret" {
 
 module "multi_runner" {
   source  = "philips-labs/github-runner/aws//modules/multi-runner"
-  version = "3.6.1"
+  version = "5.10.4"
 
   multi_runner_config = local.runners
 

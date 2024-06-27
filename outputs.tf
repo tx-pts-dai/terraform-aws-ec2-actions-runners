@@ -16,7 +16,7 @@ output "ssm_parameters" {
 
 output "runner_iam_roles" {
   description = "Map of the IAM Roles used by the created runners"
-  value       = { for k, v in module.multi_runner.runners : k => v.role_runner.arn }
+  value       = { for k, v in module.multi_runner.runners_map : k => v.role_runner.arn }
 }
 
 output "runner_labels" {
