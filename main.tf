@@ -95,6 +95,9 @@ locals {
       # if runners are ephemeral, scale-down function it's not needed because runners should get destroyed by itself after the run.
       # therefore we set it to once every 30 min
       scale_down_schedule_expression = runner.ephemeral ? "cron(*/30 * * * ? *)" : null
+      # many worksflows are split accross multiple jobs spaning a new runner immitatly after the finish of the current one
+      # setting a minimum of 15 minutes to avoid restarting runners too often
+      minimum_running_time_in_minutes = 15
     })
 
     matcherConfig = {
