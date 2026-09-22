@@ -1,5 +1,5 @@
 module "lambdas" {
-  version = "5.10.4"
+  version = "5.21.0"
   source  = "philips-labs/github-runner/aws//modules/download-lambda"
   lambdas = [
     {
