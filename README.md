@@ -106,11 +106,11 @@ In order to update the upstream module version we need to:
 1. Change directory into `lambdas` and run `terraform init` and `terraform apply`. This will download the latest .zip files needed for the different lambdas.
 1. Commit all the changed files.
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0 |
@@ -118,27 +118,27 @@ In order to update the upstream module version we need to:
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_multi_runner"></a> [multi\_runner](#module\_multi\_runner) | philips-labs/github-runner/aws//modules/multi-runner | 5.10.4 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [random_id.webhook_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | aws zone where to host the github actions runners | `string` | `"eu-central-1"` | no |
-| <a name="input_dockerhub_credentials"></a> [dockerhub\_credentials](#input\_dockerhub\_credentials) | DockerHub username and password so that the runner is will automatically be logged in to DockerHub and have increased rate limits | <pre>object({<br>    username = string<br>    password = string<br>  })</pre> | `null` | no |
+| <a name="input_dockerhub_credentials"></a> [dockerhub\_credentials](#input\_dockerhub\_credentials) | DockerHub username and password so that the runner is will automatically be logged in to DockerHub and have increased rate limits | <pre>object({<br/>    username = string<br/>    password = string<br/>  })</pre> | `null` | no |
 | <a name="input_github_app_key_base64"></a> [github\_app\_key\_base64](#input\_github\_app\_key\_base64) | Github app private key. Ensure this value is the entire base64-encoded `.pem` file (e.g. the output of `base64 app.private-key.pem`), not its content. | `string` | n/a | yes |
 | <a name="input_github_app_multirunner_id"></a> [github\_app\_multirunner\_id](#input\_github\_app\_multirunner\_id) | id of the github app | `string` | n/a | yes |
 | <a name="input_github_org"></a> [github\_org](#input\_github\_org) | Name of the Github organization, owning the runners. Required only if specified with ephemeral runners | `string` | `null` | no |
@@ -146,8 +146,8 @@ In order to update the upstream module version we need to:
 | <a name="input_log_retention_in_days"></a> [log\_retention\_in\_days](#input\_log\_retention\_in\_days) | Specifies the number of days you want to retain log events for the lambda log group. Possible values are: 0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653. | `number` | `7` | no |
 | <a name="input_runner_group_name"></a> [runner\_group\_name](#input\_runner\_group\_name) | github actions runner group to attach the agents to | `string` | `"Infrastructure-Repository-Deployment"` | no |
 | <a name="input_runner_iam_role_policy_arns"></a> [runner\_iam\_role\_policy\_arns](#input\_runner\_iam\_role\_policy\_arns) | Attach AWS or customer-managed IAM policies (by ARN) to the runner IAM role | `list(string)` | `[]` | no |
-| <a name="input_runner_log_files"></a> [runner\_log\_files](#input\_runner\_log\_files) | Replaces the original module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object(<br>    {<br>      log_group_name   = string<br>      prefix_log_group = bool<br>      file_path        = string<br>      log_stream_name  = string<br>    }<br>  ))</pre> | <pre>[<br>  {<br>    "file_path": "/var/log/syslog",<br>    "log_group_name": "syslog",<br>    "log_stream_name": "{instance_id}",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/var/log/user-data.log",<br>    "log_group_name": "user_data",<br>    "log_stream_name": "{instance_id}/user_data",<br>    "prefix_log_group": true<br>  },<br>  {<br>    "file_path": "/home/runners/actions-runner/_diag/Runner_**.log",<br>    "log_group_name": "runner",<br>    "log_stream_name": "{instance_id}/runner",<br>    "prefix_log_group": true<br>  }<br>]</pre> | no |
-| <a name="input_runners"></a> [runners](#input\_runners) | runners = {<br>      architecture: Must be either "x64" or "arm64"<br>      labels: List of extra labels to attach to the runner. "self-hosted", os and architecture labels are attached by default. Make sure this field is unique among the runners you host.<br>      idle\_config: List of objects specifying the schedule for keeping runners idle/warm<br>      maximum\_count: Number of maximum concurrent runners that can be spawned<br>      ephemeral: Boolean for selecting the type of runner<br>      use\_spot\_instances: Boolean for using spot EC2 instances instead of on-demand<br>      os: linux or windows. Operating system<br>    } | <pre>map(object({<br>    architecture   = string # x64 / arm64<br>    labels         = list(string)<br>    instance_types = list(string)<br>    idle_config = optional(list(object({<br>      cron      = optional(string, "* * 8-18 ? * 1-5")     # cron schedule parsed by CronParser (used to keep idle runners up)<br>      poolCron  = optional(string, "* 6-16 ? * Mon-Fri *") # AWS eventbridge cron schedule (used to keep runners pool up)<br>      timeZone  = optional(string, "Europe/Zurich")        # Applied to 'cron' only, not 'poolCron'.<br>      idleCount = optional(number, 1)<br>      })), [{<br>      cron      = "* * 8-18 ? * 1-5" # Important to specify also the seconds or this won't work<br>      poolCron  = "* 6-16 ? * Mon-Fri *"<br>      timeZone  = "Europe/Zurich"<br>      idleCount = 1<br>    }])<br>    maximum_count      = optional(number, 15)<br>    ephemeral          = optional(bool, false)<br>    use_spot_instances = optional(bool, false)<br>    os                 = optional(string, "linux")  # linux / windows<br>    base_ami           = optional(string, "al2023") # amazonlinux2 / ubuntu / al2023<br>    disk = optional(object({<br>      throughput_mbps = optional(number) # between 125 and 750<br>      volume_type     = optional(string, "gp3")<br>    }), {})<br>  }))</pre> | <pre>{<br>  "runner-1": {<br>    "architecture": "x64",<br>    "instance_types": [<br>      "c7a.xlarge",<br>      "c7i.xlarge",<br>      "c6a.xlarge",<br>      "c6i.xlarge"<br>    ],<br>    "labels": [<br>      "multi-runner"<br>    ]<br>  }<br>}</pre> | no |
+| <a name="input_runner_log_files"></a> [runner\_log\_files](#input\_runner\_log\_files) | Replaces the original module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details. | <pre>list(object(<br/>    {<br/>      log_group_name   = string<br/>      prefix_log_group = bool<br/>      file_path        = string<br/>      log_stream_name  = string<br/>    }<br/>  ))</pre> | <pre>[<br/>  {<br/>    "file_path": "/var/log/syslog",<br/>    "log_group_name": "syslog",<br/>    "log_stream_name": "{instance_id}",<br/>    "prefix_log_group": true<br/>  },<br/>  {<br/>    "file_path": "/var/log/user-data.log",<br/>    "log_group_name": "user_data",<br/>    "log_stream_name": "{instance_id}/user_data",<br/>    "prefix_log_group": true<br/>  },<br/>  {<br/>    "file_path": "/home/runners/actions-runner/_diag/Runner_**.log",<br/>    "log_group_name": "runner",<br/>    "log_stream_name": "{instance_id}/runner",<br/>    "prefix_log_group": true<br/>  }<br/>]</pre> | no |
+| <a name="input_runners"></a> [runners](#input\_runners) | runners = {<br/>      architecture: Must be either "x64" or "arm64"<br/>      labels: List of extra labels to attach to the runner. "self-hosted", os and architecture labels are attached by default. Make sure this field is unique among the runners you host.<br/>      idle\_config: List of objects specifying the schedule for keeping runners idle/warm<br/>      maximum\_count: Number of maximum concurrent runners that can be spawned<br/>      ephemeral: Boolean for selecting the type of runner<br/>      use\_spot\_instances: Boolean for using spot EC2 instances instead of on-demand<br/>      os: linux or windows. Operating system<br/>    } | <pre>map(object({<br/>    architecture   = string # x64 / arm64<br/>    labels         = list(string)<br/>    instance_types = list(string)<br/>    idle_config = optional(list(object({<br/>      cron      = optional(string, "* * 8-18 ? * 1-5")     # cron schedule parsed by CronParser (used to keep idle runners up)<br/>      poolCron  = optional(string, "* 6-16 ? * Mon-Fri *") # AWS eventbridge cron schedule (used to keep runners pool up)<br/>      timeZone  = optional(string, "Europe/Zurich")        # Applied to 'cron' only, not 'poolCron'.<br/>      idleCount = optional(number, 1)<br/>      })), [{<br/>      cron      = "* * 8-18 ? * 1-5" # Important to specify also the seconds or this won't work<br/>      poolCron  = "* 6-16 ? * Mon-Fri *"<br/>      timeZone  = "Europe/Zurich"<br/>      idleCount = 1<br/>    }])<br/>    maximum_count      = optional(number, 15)<br/>    ephemeral          = optional(bool, false)<br/>    use_spot_instances = optional(bool, false)<br/>    os                 = optional(string, "linux")  # linux / windows<br/>    base_ami           = optional(string, "al2023") # amazonlinux2 / ubuntu / al2023<br/>    disk = optional(object({<br/>      throughput_mbps = optional(number) # between 125 and 750<br/>      volume_type     = optional(string, "gp3")<br/>    }), {})<br/>  }))</pre> | <pre>{<br/>  "runner-1": {<br/>    "architecture": "x64",<br/>    "instance_types": [<br/>      "c7a.xlarge",<br/>      "c7i.xlarge",<br/>      "c6a.xlarge",<br/>      "c6i.xlarge"<br/>    ],<br/>    "labels": [<br/>      "multi-runner"<br/>    ]<br/>  }<br/>}</pre> | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The set of subnets where to deploy the runners | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to apply to all resources deployed from the module | `map(string)` | `{}` | no |
 | <a name="input_unique_prefix"></a> [unique\_prefix](#input\_unique\_prefix) | The unique prefix used for naming AWS resources. | `string` | n/a | yes |
@@ -159,13 +159,13 @@ In order to update the upstream module version we need to:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_runner_iam_roles"></a> [runner\_iam\_roles](#output\_runner\_iam\_roles) | Map of the IAM Roles used by the created runners |
 | <a name="output_runner_labels"></a> [runner\_labels](#output\_runner\_labels) | Map of the runner labels you can use in your jobs to select the runners |
 | <a name="output_ssm_parameters"></a> [ssm\_parameters](#output\_ssm\_parameters) | Names and ARNs of the ssm parameters created by the multi\_runner module |
 | <a name="output_webhook_endpoint"></a> [webhook\_endpoint](#output\_webhook\_endpoint) | API gateway endpoint that handles GitHub App webhook events |
 | <a name="output_webhook_secret"></a> [webhook\_secret](#output\_webhook\_secret) | Webhook secret used to validate requests from Github. Use this as 'webhook secret' in the Github app. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Authors
 
