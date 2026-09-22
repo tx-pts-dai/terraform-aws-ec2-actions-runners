@@ -106,7 +106,7 @@ In order to update the upstream module version we need to:
 1. Change directory into `lambdas` and run `terraform init` and `terraform apply`. This will download the latest .zip files needed for the different lambdas.
 1. Commit all the changed files.
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -165,7 +165,7 @@ In order to update the upstream module version we need to:
 | <a name="output_ssm_parameters"></a> [ssm\_parameters](#output\_ssm\_parameters) | Names and ARNs of the ssm parameters created by the multi\_runner module |
 | <a name="output_webhook_endpoint"></a> [webhook\_endpoint](#output\_webhook\_endpoint) | API gateway endpoint that handles GitHub App webhook events |
 | <a name="output_webhook_secret"></a> [webhook\_secret](#output\_webhook\_secret) | Webhook secret used to validate requests from Github. Use this as 'webhook secret' in the Github app. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
 
 ## Authors
 
