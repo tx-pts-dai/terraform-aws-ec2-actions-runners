@@ -125,7 +125,7 @@ In order to update the upstream module version we need to:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_multi_runner"></a> [multi\_runner](#module\_multi\_runner) | philips-labs/github-runner/aws//modules/multi-runner | 5.10.4 |
+| <a name="module_multi_runner"></a> [multi\_runner](#module\_multi\_runner) | philips-labs/github-runner/aws//modules/multi-runner | 6.1.0 |
 
 ## Resources
 
